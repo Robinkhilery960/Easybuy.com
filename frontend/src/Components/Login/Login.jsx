@@ -1,11 +1,26 @@
 import React, { useState } from 'react'
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 import styles from "../../Styles/style"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { server } from '../../server';
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
+    const navigate=useNavigate()
+     
+    const handleSubmit=  (e)=>{
+        e.preventDefault()
+         axios.post(`${server}/user/login-user`,{email, password}, {withCredentials:true}).then((res)=>{
+                toast.success("Login Successful")
+                console.log(res.data)
+                // navigate("/")
+        }).catch((error)=>{
+            toast.error(error.response.data.message)
+        })
+    }
     return (
         <div className='min-h-screen flex flex-col   justify-center items-center py-12 sm:px-6 lg:px-8  
         bg-gray-50'>
@@ -16,7 +31,7 @@ const Login = () => {
             </div>
             <div className='mt-8 sm:w-full sm:max-w-md   '>
                 <div className="bgwhite py-8 px-4 shadow sm:ronded-lg sm:px10">
-                    <form className='space-y-6'>
+                    <form className='space-y-6' onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="email" className='block text-sm font-medium text-gray-700 '>Email address</label>
                             <div className="mt-1">

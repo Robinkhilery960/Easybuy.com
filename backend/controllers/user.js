@@ -9,13 +9,28 @@ const sendMail = require("../utils/sendMail");
 const ErrorHandler = require("../utils/ErrorHandler");
 const sendToken = require("../utils/jwtToken.js");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const { isAuthenticated } = require("../middlewares/auth.js");
 
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   // data extraction from  request
   const { name, email, password } = req.body;
 
+  if (!(name && email && password)) {
+    return next(new ErrorHandler("A field is left blank plase fill it ", 400));
+  }
+
+  //check password length
+  if (password.length < 8) {
+    return next(
+      new ErrorHandler(
+        "You password is should be 8 character long or more  ",
+        400
+      )
+    );
+  }
   try {
     const userEmail = await User.findOne({ email });
+
     // if user already exist
     if (userEmail) {
       // remove the upload image in upload directory
@@ -67,26 +82,25 @@ router.post(
       const { activationToken } = req.body;
 
       // compare the activation token
-      console.log(process.env.ACTIVATION_SECRET_KEY);
-      const newUser = await jwt.verify(
+      const userData = await jwt.verify(
         activationToken,
         process.env.ACTIVATION_SECRET_KEY
-      ); 
-      
-      if (!newUser) { 
+      );
+
+      if (!userData) {
         return next(new ErrorHandler("Token is invalid", 400));
       }
 
       // check if the user   already exist or not with the email id
-      const user = await User.findOne({email:newUser.email });
-      if (user) {
+      const userFound = await User.findOne({ email: userData.email });
+      if (userFound) {
         return next(new ErrorHandler("User Already exist", 400));
       }
-      
-      const { name, email, password, avatar } = newUser;
-      console.log("user", user)
+
+      const { name, email, password, avatar } = userData;
+
       // create a new user in Databse
-      await User.create({
+      const user = await User.create({
         name,
         email,
         password,
@@ -94,10 +108,61 @@ router.post(
       });
 
       //  create and send Token to frontend
-      sendToken(newUser, 201, res);
+      sendToken(user, 201, res);
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
+  })
+);
+
+router.post(
+  "/login-user",
+  catchAsyncErrors(async (req, res, next) => {
+    //get data from client
+    const { email, password } = req.body;
+    if (!(email && password)) {
+      return next(new ErrorHandler("Plase provide email and password ", 400));
+    }
+
+    //check user in database
+    try {
+      const user = await User.findOne({ email }).select("+password");
+      if (!user) {
+        return next(
+          new ErrorHandler("User not found, Please create your account ", 400)
+        );
+      }
+
+      // comapre password
+      const isPasswordValid = await user.comparePassword(password);
+      console.log(isPasswordValid);
+      if (!isPasswordValid) {
+        return next(new ErrorHandler("Invalid credentials", 400));
+      }
+
+      sendToken(user, 201, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+router.get(
+  "/getuser",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+     try {
+      console.log(req.user)
+        if(!req.user){
+          return next(new ErrorHandler("User does not exist please signup", 400))
+        }
+        res.status(201).json({
+          success:true,
+          user:req.user
+        })
+      } catch (error) {
+        return next(new ErrorHandler(error.message, 500))
+     }
   })
 );
 

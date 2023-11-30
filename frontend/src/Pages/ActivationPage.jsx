@@ -1,16 +1,18 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { server } from '../server'
 
 const ActivationPage = () => {
     const { activationToken } = useParams()
     const [error, setError] = useState(false) 
+    const navigate=useNavigate()
     const activationEmail=async ()=>{
         if (activationToken) { 
             try {
                 const res = await axios.post(`${server}/user/activation`, { activationToken })
-                console.log(res.data)
+                console.log(res)
+                // navigate("/login")
             } catch (error) {
                 console.log(error.response.data.message)
                 setError(true)
