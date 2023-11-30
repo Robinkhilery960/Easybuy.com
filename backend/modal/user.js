@@ -30,10 +30,7 @@ const userSchema = new mongoose.Schema({
     },
   ],
   role: { type: String, default: "user" },
-  avatar: {
-    public_id: { type: String, required: true },
-    url: { type: String, required: true },
-  },
+  avatar: String,
   createdAt: { type: Date, default: Date.now() },
   resetPasswordToken: String,
   resetPasswordTime: Date,
@@ -45,7 +42,7 @@ userSchema.pre("save", async function (next) {
     next();
   }
 
-  this.password = await bcrypt.hash(this.password);
+  this.password = await bcrypt.hash(this.password, 10);
 });
 
 // JWT create
