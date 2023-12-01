@@ -6,21 +6,17 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { server } from "./server.js";
+import { useDispatch, useSelector } from "react-redux";
+import { loadUser } from "./redux/slice/user.js";
 
 const App = () => {
-  const getUserData = async () => {
-    try {
-      const res = await axios.get(`${server}/user/getuser`, {
-        withCredentials: true,
-      });
-      console.log(res);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  const state= useSelector((state)=>state.user.isAuthenticated) 
+  console.log(state)
+  const dispatch= useDispatch() 
   
-  useEffect(() => {
-    getUserData();
+  
+  useEffect(() => { 
+    dispatch(loadUser())
   }, []);
   return (
     <BrowserRouter>
