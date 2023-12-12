@@ -16,7 +16,8 @@ const Login = () => {
          axios.post(`${server}/user/login-user`,{email, password}, {withCredentials:true}).then((res)=>{
                 toast.success("Login Successful")
                 console.log(res.data)
-                // navigate("/")
+                navigate("/")
+                window.location.reload()
         }).catch((error)=>{
             toast.error(error.response.data.message)
         })
