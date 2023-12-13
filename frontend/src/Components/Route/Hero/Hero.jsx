@@ -8,7 +8,7 @@ const Hero = () => {
             style={{ backgroundImage: "url(https://themes.rslahmed.dev/rafcart/assets/images/banner-2.jpg)" }}>
             <div className={`${styles.section} w-[90%] 800px:w-[60%]`}>
                 <h1 className={`text-[35px] leading-[1.2] 800px:text-[60px] text-[#3d3a3a] font-[600] capitalize`}>
-                    Best Colection for <br /> home deocaration
+                    Best Collection for <br /> home deocaration
                     <p className='pt-5 text-[16px] font-[Poppins] font-[400] text-[#000000ba] '> Lorem ipsum dolor sit amet consectetur, adipisicing elit. Beatae,
                         assumenda? Quisquam itaque <br /> exercitationem labore vel, dolore
                         quidem asperiores, laudantium temporibus soluta optio consequatur{" "}

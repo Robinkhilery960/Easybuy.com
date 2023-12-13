@@ -21,7 +21,7 @@ const ProductDetailCard = ({ setOpen, data }) => {
                             <div className="block w-full 800px:flex">
                                 <div className='w-full 800px:[50%]'>
                                     <img src={data.image_Url[0].url} alt="" />
-                                    <div className='flex'>
+                                    <div className='flex items-center'>
                                         <img src={data.shop.shop_avatar.url} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
                                         <div>
                                             <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>

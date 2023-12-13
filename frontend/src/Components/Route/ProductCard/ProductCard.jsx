@@ -66,7 +66,7 @@ const ProductCard = ({ data }) => {
                         color="#333"
                         title='Quick View'/> 
                     <AiOutlineShoppingCart size={25} className='cursor-pointer absolute right-2 top-24'
-                        onClick={()=>setOpen(!open)}
+                         
                         color="#444"
                         title='Add to cart'/> 
                     {
