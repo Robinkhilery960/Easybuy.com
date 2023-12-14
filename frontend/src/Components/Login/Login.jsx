@@ -17,7 +17,7 @@ const Login = () => {
                 toast.success("Login Successful")
                 console.log(res.data)
                 navigate("/")
-                window.location.reload()
+                window.location.reload(true)
         }).catch((error)=>{
             toast.error(error.response.data.message)
         })
