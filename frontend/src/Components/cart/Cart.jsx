@@ -7,7 +7,7 @@ import styles from '../../Styles/style'
 const Cart = ({setOpenCart}) => {
     const cartData=[
         {
-            name:"Iphine14 pro max 256 g ssd and 8b ram silver colour",
+            name:"Iphine14 prPo max 256 g ssd and 8b ram silver colour",
             description:"test",
             price:999
         },
@@ -24,7 +24,7 @@ const Cart = ({setOpenCart}) => {
     ]
   return (
     <div className='fixed top-0 left-0 w-full bg-[#00000028] h-screen z-10 '>
-        <div className='fixed top-0 right-0 min-h-full bg-white flex flex-col justify-between w-[25%] shadow-sm '>
+        <div className='fixed top-0 right-0 h-[100%] bg-white flex flex-col justify-between w-[25%] shadow-sm  overflow-y-scroll '>
             <div >
                 <div className='flex w-full justify-end pt-5 pr-5'>
                     <RxCross1 size={25} className='cursor-pointer' onClick={()=>setOpenCart(false)}/>

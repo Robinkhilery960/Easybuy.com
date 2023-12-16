@@ -50,7 +50,7 @@ const ProductCard = ({ data }) => {
                 </div>
                 </Link>
                 {/* side options */}
-                <div>
+                <div> 
                     {
                         click ?<AiFillHeart size={22} className='cursor-pointer absolute right-2 top-5'
                         onClick={()=>setClick(!click)}
@@ -60,7 +60,7 @@ const ProductCard = ({ data }) => {
                         onClick={()=>setClick(!click)}
                         color={click? "red" : "#333"}
                         title='Add to wishlist'/> 
-                    }
+                    } 
                     <AiOutlineEye size={22} className='cursor-pointer absolute right-2 top-14'
                         onClick={()=>setOpen(!open)}
                         color="#333"
