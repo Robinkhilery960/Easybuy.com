@@ -3,6 +3,7 @@ import { RxCross1 } from 'react-icons/rx'
 import { HiOutlineMinus, HiPlus } from 'react-icons/hi'
 import { IoBagHandleOutline } from 'react-icons/io5'
 import styles from '../../Styles/style'
+import { Link } from 'react-router-dom'
 
 const Cart = ({setOpenCart}) => {
     const cartData=[
@@ -49,9 +50,11 @@ const Cart = ({setOpenCart}) => {
                     }
                 </div>
                 <div className={`h-[45px] flex items-center justify-center w-[100%] bg-[#e44343] rounded-[5px]`}>
+                <Link to="/checkout"> 
                 <h1 className='text-[#fff] text-[18px] font-[600]'>
                     Checkout Now (USD$ 1080)
                 </h1>
+                </Link>
                 </div>
             </div>
         </div>

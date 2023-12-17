@@ -95,7 +95,7 @@ const Header = ({ activeHeading }) => {
                         ) : null}
                     </div>
                     <div className={`${styles.button}`}>
-                        <Link to="/seller">
+                        <Link to="/create-shop">
                             <h1 className="text-[#fff] flex items-center ">
                                 Become Seller
                                 <IoIosArrowForward className="ml-1" />
@@ -298,7 +298,7 @@ const Header = ({ activeHeading }) => {
                             </div>
                             <Navbar active={activeHeading} />
                             <div className={`${styles.button} ml-5 !rounded-[4px]  `}>
-                                <Link to="/seller">
+                                <Link to="/create-shop">
                                     <h1 className="text-[#fff] flex items-center ">
                                         Become Seller
                                         <IoIosArrowForward className="ml-1 pt-1" />
@@ -317,7 +317,7 @@ const Header = ({ activeHeading }) => {
                                                     src={`${backend_url}` + user.avatar}
                                                     className="w-[35px] h-[35px] rounded-full"
                                                 />
-                                            </Link>
+                                            </Link> 
                                         ) : (
                                            <>
                                             <Link to="/login">

@@ -4,14 +4,15 @@ import { useNavigate, useParams } from "react-router-dom"
 import { server } from '../server'
 
 const ActivationPage = () => {
+    console.log("activation somponent is renderfd")
     const { activationToken } = useParams()
-    const [error, setError] = useState(false) 
-    const navigate=useNavigate()
-    const activationEmail=async ()=>{
-        if (activationToken) { 
+    const [error, setError] = useState(false)
+    const navigate = useNavigate()
+    const activationEmail = async () => {
+        if (activationToken) {
             try {
                 const res = await axios.post(`${server}/user/activation`, { activationToken })
-                console.log(res)
+                console.log("res", res)
                 // navigate("/login")
             } catch (error) {
                 console.log(error.response.data.message)
@@ -20,8 +21,8 @@ const ActivationPage = () => {
         }
     }
 
-    useEffect(  () => {
-        activationEmail() 
+    useEffect(() => {
+        activationEmail()
     }, [activationToken])
 
     return (

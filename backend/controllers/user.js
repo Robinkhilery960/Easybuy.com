@@ -80,7 +80,7 @@ router.post(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { activationToken } = req.body;
-
+      console.log("activeation is called")
       // compare the activation token
       const userData = await jwt.verify(
         activationToken,
@@ -152,7 +152,7 @@ router.get(
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
      try {
-      console.log(req.user)
+      console.log("i am called from getuser ", req.user)
         if(!req.user){
           return next(new ErrorHandler("User does not exist please signup", 400))
         }

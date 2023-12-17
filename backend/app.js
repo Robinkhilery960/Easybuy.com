@@ -23,7 +23,9 @@ if (process.env.NODE_ENV != "PRODUCTION") {
   });
 }
 const user = require("./controllers/user");
+const shop = require("./controllers/shop");
 app.use("/api/v2/user", user);
+app.use("/api/v2/shop", shop);
 
 // ErrorHandling
 app.use(ErrorHandler);
