@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {ShopHomePage} from "./ShopRoutes.js"
+import { ShopHomePage, ShopDashboardPage } from "./routes/ShopRoutes.js";
 import {
   LoginPage,
   SignupPage,
@@ -17,23 +17,18 @@ import {
   CreateShopPage,
   SellerActivationPage,
   LoginShopPage,
-} from "./Routes.js";
+} from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { server } from "./server.js";
 import { useDispatch, useSelector } from "react-redux";
 import { loadUser } from "./redux/slice/user.js";
-import ProtectedRoute from "./ProtectedRoute.js";
+import ProtectedRoute from "./routes/ProtectedRoute.js";
 import { loadShop } from "./redux/slice/shop.js";
-import ProtectedShopRoute from "./ProtectedShopRoutes.js";
+import ProtectedShopRoute from "./routes/ProtectedShopRoutes.js";
 
 const App = () => {
-  const { isAuthenticated } = useSelector((state) => state.user);
-  const { isShopAuthenticated } = useSelector((state) => state.shop);
-  
-  console.log("isShopAuthenticated", isShopAuthenticated)
-
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -51,7 +46,7 @@ const App = () => {
           <Route
             path="/checkout"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute>
                 <CheckoutPage />
               </ProtectedRoute>
             }
@@ -72,7 +67,7 @@ const App = () => {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
+              <ProtectedRoute>
                 <ProfilePage />
               </ProtectedRoute>
             }
@@ -85,8 +80,16 @@ const App = () => {
           <Route
             path="/shop/:shopId"
             element={
-              <ProtectedShopRoute isShopAuthenticated={isShopAuthenticated}>
+              <ProtectedShopRoute>
                 <ShopHomePage />
+              </ProtectedShopRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedShopRoute>
+                <ShopDashboardPage />
               </ProtectedShopRoute>
             }
           />

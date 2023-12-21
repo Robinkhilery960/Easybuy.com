@@ -14,9 +14,8 @@ const LoginShop = () => {
     const handleSubmit=  (e)=>{
         e.preventDefault()
          axios.post(`${server}/shop/login-shop`,{email, password}, {withCredentials:true}).then((res)=>{
-                toast.success("Shop login Successful")
-                console.log(res.data)
-                navigate("/")
+                toast.success("Shop login Successful") 
+                navigate("/dashboard")
                 // window.location.reload(true)
         }).catch((error)=>{
             toast.error(error.response.data.message)

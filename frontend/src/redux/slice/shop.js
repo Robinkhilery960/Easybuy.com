@@ -1,11 +1,8 @@
 import {createSlice,createAsyncThunk} from "@reduxjs/toolkit"
 import axios from "axios"
 import { server } from "../../server";
-const initialState={
-    isShopAuthenticated:false,
-    isShopLoading:false,
-    isShopError:false,
-    shop:null
+const initialState={ 
+    isShopLoading:true,  
 }
 
 export const loadShop= createAsyncThunk("loadShop", async()=>{

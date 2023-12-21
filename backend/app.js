@@ -16,12 +16,7 @@ app.use("/", express.static("uploads"));
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(fileUpload({useTempFiles:true}))
  
-//config
-if (process.env.NODE_ENV != "PRODUCTION") {
-  require("dotenv").config({
-    path: "backend/config/.env",
-  });
-}
+ 
 const user = require("./controllers/user");
 const shop = require("./controllers/shop");
 app.use("/api/v2/user", user);
