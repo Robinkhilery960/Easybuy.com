@@ -5,7 +5,7 @@ import {
   ShopHomePage,
   ShopDashboardPage,
   CreateProductPage,
-  AllProductsPage,
+  AllProductsPage, ShopCreateEvents, AllEventsPage
 } from "./routes/ShopRoutes.js";
 import {
   LoginPage,
@@ -111,6 +111,22 @@ const App = () => {
             element={
               <ProtectedShopRoute>
                 <AllProductsPage />
+              </ProtectedShopRoute>
+            }
+          />
+          <Route
+            path="/dashboard-create-event"
+            element={
+              <ProtectedShopRoute>
+                <ShopCreateEvents />
+              </ProtectedShopRoute>
+            }
+          />
+          <Route
+            path="/dashboard-events"
+            element={
+              <ProtectedShopRoute>
+                <AllEventsPage />
               </ProtectedShopRoute>
             }
           />

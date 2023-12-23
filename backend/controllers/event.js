@@ -6,30 +6,32 @@ const Shop = require("../modal/shop");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Product = require("../modal/product");
 const { isShopAuthenticated } = require("../middlewares/auth");
+const Event = require("../modal/event");
 const fs= require("fs")
 
-// create product
+// create event
 
 router.post(
-  "/create-product",
+  "/create-event",
   upload.array("images"),
   catchAsyncErrors(async (req, res, next) => {
     // getting data from frontend
     try {
       const { shopId } = req.body;
+      console.log(shopId);
       const shop = await Shop.findById(shopId);
       if (!shop) {
         return next(new ErrorHandler("shopId is invalid", 404));
       } else {
-        // now we wil create a product for this shop
-        const productData = req.body;
-        productData.shop = shop;
+        // now we wil create a event  for this shop
+        const eventData = req.body;
+        eventData.shop = shop;
         const imageUrls = req.files.map((file) => `${file.filename}`);
-        productData.images = imageUrls;
-        const product = await Product.create(productData);
+        eventData.images = imageUrls;
+        const event = await Event.create(eventData);
         res.status(200).json({
-          message: "Product created successfully",
-          product,
+          message: "Event created successfully",
+          event,
         });
       }
     } catch (error) {
@@ -38,25 +40,22 @@ router.post(
   })
 );
 
-// delete product
+// delete event
 router.delete(
-  "/delete-product/:id",
+  "/delete-event/:id",
   isShopAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
-    // get the product id from  params
+    // get the event id from  params
     const { id } = req.params;
-    // find  and delete this product
+    // find  and delete this event
     try {
-      const deletedProduct = await Product.findByIdAndDelete(id);
-        console.log("deletedProduct", deletedProduct)
-      if (!deletedProduct) {
-        return next(new ErrorHandler("Product not found to delete", 500));
+      const deletedEvent = await Event.findByIdAndDelete(id);
+      if (!deletedEvent) {
+        return next(new ErrorHandler("Event not found to delete", 500));
       }
 
-       
-      deletedProduct.images.forEach((image) => {
-        const filePath = `uploads/${image}`;
-        console.log(filePath)
+      deletedEvent.images.forEach((image) => {
+        const filePath = `uploads/${image}`; 
         fs.unlink(filePath, (err) => {
           if (err) {
             console.log(err.message);
@@ -66,10 +65,8 @@ router.delete(
         });
       });
 
-      return next(new ErrorHandler("User already exist", 400));
-
       res.status(200).json({
-        message: "Product deleted successfully",
+        message: "Event deleted successfully",
       });
     } catch (error) {
       return next(new ErrorHandler(error, 500));
@@ -79,21 +76,21 @@ router.delete(
 
 // get all products
 router.get(
-  "/get-all-products/:shopId",
+  "/get-all-events/:shopId",
   catchAsyncErrors(async (req, res, next) => {
     try {
       // get the shop id from param
       const { shopId } = req.params;
-      console.log("i am called from get all products");
-      // make a requet to the product collection wtih this shop id
-      const products = await Product.find({ shopId });
+      // make a requet to the even collection wtih this shop id
+      const events = await Event.find({ shopId });
       res.status(200).json({
         success: true,
-        products,
+        events,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 500));
     }
   })
 );
+
 module.exports = router;
