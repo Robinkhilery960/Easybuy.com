@@ -53,7 +53,7 @@ const CreateProduct = () => {
         if(ProductSuccess){
             
             toast.success("Product is created successfully")
-            navigate("/dashboard")
+            navigate("/dashboard-products")
             window.location.reload(true)
          }
     }, [ ProductError , ProductSuccess])

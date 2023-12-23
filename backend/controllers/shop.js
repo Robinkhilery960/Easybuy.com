@@ -195,6 +195,23 @@ router.get(
   })
 );
 
+// ogout shop 
+router.get("/logout", isShopAuthenticated, catchAsyncErrors(async(req, res)=>{
+  try {
+    res.cookie("sellerToken", null, {
+      expires:new Date(Date.now()),
+      httpOnly: true
+    })
+
+    res.status(201).json({
+      success:true,
+      message:"Log out successful!"
+    })
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500))
+  }
+}))
+
 
 // creatng activation tokens
 function createActivationToken(shop) {

@@ -1,14 +1,24 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { backend_url } from '../../server'
+import { backend_url, server } from '../../server'
 import styles from '../../Styles/style'
+import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const ShopInfo = ({isOwner}) => {
 
     const {shop} = useSelector((state)=>state.shop)
-    const logoutHandler =()=>{
-        
-    }
+    const  navigate= useNavigate()
+
+    const logoutHandler = () => {
+        axios.get(`${server}/shop/logout`, { withCredentials: true }).then((res) => {
+            toast.success("Shop logout  Successful")
+            navigate("/login-shop")
+            window.location.reload(true)
+        }).catch((error) => {
+            toast.error(error.response.data.message)
+        })}
   return (
     <div> 
         <div className="w-full py-5">
