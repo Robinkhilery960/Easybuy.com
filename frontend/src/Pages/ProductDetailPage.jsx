@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom'
 import { productData } from '../Static/data.js'
 
 
-const ProductDetailPage = () => {
+const ProductDetailPage = () => { 
     const [data, setData]=useState(null)
     const {name} = useParams()
     const productName=name.replace(/-/g, " ")

@@ -64,9 +64,7 @@ router.delete(
             console.log("Deletion of file is done");
           }
         });
-      });
-
-      return next(new ErrorHandler("User already exist", 400));
+      }); 
 
       res.status(200).json({
         message: "Product deleted successfully",

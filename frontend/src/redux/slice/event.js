@@ -58,7 +58,7 @@ export const createEvent = createAsyncThunk(
   );
 
   const eventSlice = createSlice({
-    name: "product",
+    name: "event",
     initialState,
     extraReducers: (builder) => {
       // for single product
