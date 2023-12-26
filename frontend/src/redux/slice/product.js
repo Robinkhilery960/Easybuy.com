@@ -3,8 +3,10 @@ import axios from "axios";
 import { server } from "../../server";
 const initialState = {
   productLoading: true,
-  allProductLoading: true,
-    deleteProductLoading: true,
+  shopProductsLoading: true,
+  deleteShopProductLoading: true,
+  allProductsLoading: true
+  
 };
 
 export const createProduct = createAsyncThunk(
@@ -40,8 +42,9 @@ export const deleteProduct = createAsyncThunk("deleteProduct", async (id) => {
   }
 });
 
-export const loadAllProducts = createAsyncThunk(
-  "loadAllProducts",
+// get  shop products
+export const loadShopProducts = createAsyncThunk(
+  "loadShopProducts",
   async (shopId) => {
     try {
       const response = await axios.get(
@@ -54,6 +57,21 @@ export const loadAllProducts = createAsyncThunk(
     }
   }
 );
+// get all shop's products
+export const loadAllProducts = createAsyncThunk(
+  "loadAllProducts",
+  async (shopId) => {
+    try {
+      const response = await axios.get(
+        `${server}/product/get-all-shops-products`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+)
 
 const productSlice = createSlice({
   name: "product",
@@ -75,29 +93,44 @@ const productSlice = createSlice({
 
     // delete a product from shop
     builder.addCase(deleteProduct.fulfilled, (state, action) => {
-      state.deleteProductLoading = false;
+      state.deleteShopProductLoading = false;
       state.message = action.payload.message;
-      state.productDeleteSuccess = true;
+      state.shopProductDeleteSuccess = true;
     });
     builder.addCase(deleteProduct.pending, (state, action) => {
-      state.deleteProductLoading = true;
+      state.deleteShopProductLoading = true;
     });
     builder.addCase(deleteProduct.rejected, (state, action) => {
-      state.deleteProductLoading = false;
+      state.deleteShopProductLoading = false;
       state.delelteProductError = action.payload;
     });
 
-    //for all product
+    //for shop  all product
+    builder.addCase(loadShopProducts.fulfilled, (state, action) => {
+      state.shopProductsLoading = false;
+      state.shopProducts = action.payload.products;
+      state.shopProductsSuccess = true;
+    });
+    builder.addCase(loadShopProducts.pending, (state, action) => {
+      state.shopProductsLoading = true;
+    });
+    builder.addCase(loadShopProducts.rejected, (state, action) => {
+      state.shopProductsLoading = false;
+      state.allProductError = action.payload;
+    });
+
+
+    //for all shops  all product
     builder.addCase(loadAllProducts.fulfilled, (state, action) => {
-      state.allProductLoading = false;
-      state.products = action.payload.products;
-      state.allProductSuccess = true;
+      state.allProductsLoading = false;
+      state.allProducts = action.payload.allProducts;
+      state.allProductsSuccess = true;
     });
     builder.addCase(loadAllProducts.pending, (state, action) => {
-      state.allProductLoading = true;
+      state.allProductsLoading = true;
     });
     builder.addCase(loadAllProducts.rejected, (state, action) => {
-      state.allProductLoading = false;
+      state.allProductsLoading = false;
       state.allProductError = action.payload;
     });
   },

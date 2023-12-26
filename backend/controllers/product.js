@@ -75,7 +75,7 @@ router.delete(
   })
 );
 
-// get all products
+// get all products of a shop
 router.get(
   "/get-all-products/:shopId",
   catchAsyncErrors(async (req, res, next) => {
@@ -88,6 +88,24 @@ router.get(
       res.status(200).json({
         success: true,
         products,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+
+
+// get all products of all shops
+
+router.get(
+  "/get-all-shops-products",
+  catchAsyncErrors(async (req, res, next) => {
+    try {   
+      const allProducts =  await Product.find().sort({ createdAt: -1 }); 
+      res.status(200).json({
+        success: true,
+      allProducts,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 500));

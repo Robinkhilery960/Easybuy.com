@@ -1,7 +1,7 @@
 const catchAsyncErrors = require("./catchAsyncErrors");
 const jwt = require("jsonwebtoken");
 const User= require("../modal/user");
-const shop = require("../modal/shop");
+const Shop = require("../modal/shop");
 
 exports.isAuthenticated = catchAsyncErrors(async(req, res, next) => {
   //extract token from cookies
@@ -32,7 +32,7 @@ exports.isShopAuthenticated = catchAsyncErrors(async(req, res, next) => {
     }
     
     const payload = jwt.verify(sellerToken, process.env.JWT_SECRET_KEY);
-     req.shop= await shop.findById(payload.id)
+     req.shop= await Shop.findById(payload.id)
      next()
 } catch (error) { 
     return next(new Error(error.message, 500));

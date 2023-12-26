@@ -1,11 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
   ShopHomePage,
   ShopDashboardPage,
   CreateProductPage,
-  AllProductsPage, ShopCreateEvents, AllEventsPage, ShopAllCoupons
+  AllProductsPage,
+  ShopCreateEvents,
+  AllEventsPage,
+  ShopAllCoupons,
+  ShopPreviewPage,
 } from "./routes/ShopRoutes.js";
 import {
   LoginPage,
@@ -32,13 +36,16 @@ import { loadUser } from "./redux/slice/user.js";
 import ProtectedRoute from "./routes/ProtectedRoute.js";
 import { loadShop } from "./redux/slice/shop.js";
 import ProtectedShopRoute from "./routes/ProtectedShopRoutes.js";
+import { loadAllProducts } from "./redux/slice/product.js"; 
+import { loadAllEvents, loadAllShopsEvents } from "./redux/slice/event.js";
 
 const App = () => {
   const dispatch = useDispatch();
-
   useEffect(() => {
     dispatch(loadUser());
     dispatch(loadShop());
+    dispatch(loadAllProducts());
+    dispatch(loadAllShopsEvents());
   }, []);
   return (
     <>
@@ -138,6 +145,7 @@ const App = () => {
               </ProtectedShopRoute>
             }
           />
+          <Route path="/shop/preview/:shopId" element={<ShopPreviewPage />} />
         </Routes>
         <ToastContainer
           position="top-right"

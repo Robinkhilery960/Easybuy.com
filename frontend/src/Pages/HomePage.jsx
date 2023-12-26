@@ -9,6 +9,7 @@ import Sponsored from "../Components/Route/Sponsored/Sponsored"
 import Footer from "../Components/layout/Footer.jsx"
 
 const HomePage = () => {
+ 
   return (
     <div > 
         <Header activeHeading={1}/>

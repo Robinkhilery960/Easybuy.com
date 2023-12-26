@@ -155,7 +155,7 @@ router.post(
     //check user in database
     try {
       const shop = await Shop.findOne({ email }).select("+password");
-      if (!Shop) {
+      if (!shop) {
         return next(
           new ErrorHandler("Shop not found, Please register your  shop ", 400)
         );
@@ -195,7 +195,7 @@ router.get(
   })
 );
 
-// ogout shop 
+// logout shop 
 router.get("/logout", isShopAuthenticated, catchAsyncErrors(async(req, res)=>{
   try {
     res.cookie("sellerToken", null, {
@@ -211,6 +211,24 @@ router.get("/logout", isShopAuthenticated, catchAsyncErrors(async(req, res)=>{
     return next(new ErrorHandler(error.message, 500))
   }
 }))
+
+// get shop info  for preview
+router.get(
+  "/get-shop-info/:shopId", 
+  catchAsyncErrors(async (req, res, next) => {
+     try { 
+       const {shopId}= req.params
+      const shop=await Shop.findById(shopId)
+        res.status(201).json({
+          success:true,
+          shop
+        })
+      } catch (error) {
+        return next(new ErrorHandler(error.message, 500))
+     }
+  })
+);
+
 
 
 // creatng activation tokens

@@ -3,16 +3,18 @@ import { useEffect } from 'react'
 import { productData } from '../../Static/data'
 import styles from '../../Styles/style'
 import ProductCard from '../Route/ProductCard/ProductCard'
+import { useSelector } from 'react-redux'
 
 const SuggestedProduct = ({ data }) => {
+     const {allProducts}= useSelector(state=>state.product)
     const [products, setProducts] = useState(null)
 
     useEffect(() => {
-        const result = productData && productData.filter((product) => product.category === data.category)
+        const result = allProducts && allProducts.filter((product) => product.category === data.category)
         setProducts(result)
     }, [])
     return (
-        <div>{data ? (<div className={`p-4 ${styles.section}`}>
+        <div>{products ? (<div className={`p-4 ${styles.section}`}>
             <h2 className={`${styles.heading} text-[25px] font-[500] border-b mb-5`}>
                 Related Product
             </h2>

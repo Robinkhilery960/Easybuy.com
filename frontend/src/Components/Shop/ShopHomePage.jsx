@@ -1,8 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styles from '../../Styles/style'
 import ShopInfo from "../../Components/Shop/ShopInfo.jsx"
 import ShopProfileData from "../../Components/Shop/ShopProfileData.jsx"
+import { useSelector } from 'react-redux'
+import { useNavigate, useParams } from 'react-router-dom'
 const ShopHomePage = () => {
+  const { shop } = useSelector(state => state.shop)
+  const { shopId } = useParams()
+  const navigate = useNavigate()
+  useEffect(() => {
+    if (shop._id !== shopId) {
+      navigate("/login-shop")
+    }
+  }, [])
+
   return (
     <div className={`${styles.section} bg-[rgb(245,245,245)]`}>
       <div className="w-full flex py-10 justify-between">

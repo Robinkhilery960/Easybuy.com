@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteProduct, loadAllProducts } from '../../redux/slice/product'
+import { deleteProduct, loadShopProducts } from '../../redux/slice/product'
 import { AiOutlineDelete, AiOutlineEye } from 'react-icons/ai'
 import { Button } from '@material-ui/core'
 import Loader from '../layout/Loader'
@@ -106,7 +106,7 @@ const AllProducts = () => {
 
 
     useEffect(() => {
-        dispatch(loadAllProducts(shop._id))
+        dispatch(loadShopProducts(shop._id))
     }, [deleteProductLoading])
 
     return (

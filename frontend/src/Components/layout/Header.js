@@ -19,6 +19,7 @@ import Wishlist from "../../Components/Wishlist/Wishlist.jsx";
 import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
+    const {allProducts}= useSelector(state=>state.product)
     const [search, setSearch] = useState("");
     const [searchData, setSearchData] = useState(null);
     const [active, setActive] = useState(false);
@@ -33,7 +34,7 @@ const Header = ({ activeHeading }) => {
     const handleSearch = (e) => {
         const searchTerm = e.target.value;
         setSearch(searchTerm);
-        const filteredProducts = productData.filter((product) =>
+        const filteredProducts = [...allProducts].filter((product) =>
             product.name.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setSearchData(filteredProducts);
@@ -52,12 +53,11 @@ const Header = ({ activeHeading }) => {
             <div className={`${styles.section}`}>
                 <div className="hidden 800px:h-[50px] 800px:my-[20px] 800px:flex items-center justify-between">
                     <div>
-                        <Link to="/">
-                            {" "}
+                        <Link to="/"> 
                             <img
                                 src="https://res.cloudinary.com/dsaofytf2/image/upload/v1701399357/dmjgtxscrlw5e506jqoa.jpg"
                                 alt=""
-                                className="w-[70px] "
+                            className="w-[70px] "
                             />{" "}
                         </Link>
                     </div>
@@ -69,7 +69,7 @@ const Header = ({ activeHeading }) => {
                             onChange={handleSearch}
                             className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
                         />
-                        <AiOutlineSearch
+                        <AiOutlineSearch 
                             size={30}
                             className="absolute right-2 top-1.5 cursor-pointer"
                         />
@@ -82,7 +82,7 @@ const Header = ({ activeHeading }) => {
                                         <Link to={`/product/${product_name}`}>
                                             <div className="w-fullflex items-start py-3">
                                                 <img
-                                                    src={product.image_Url[0].url}
+                                                    src={`${backend_url}${product.images[0]}`}
                                                     alt=""
                                                     className="w-[40px] h-[40px] mr-[10px]"
                                                 />

@@ -3,8 +3,7 @@ const router = express.Router();
 const { upload } = require("../multer");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Shop = require("../modal/shop");
-const ErrorHandler = require("../utils/ErrorHandler");
-const Product = require("../modal/product");
+const ErrorHandler = require("../utils/ErrorHandler"); 
 const { isShopAuthenticated } = require("../middlewares/auth");
 const Event = require("../modal/event");
 const fs= require("fs")
@@ -74,7 +73,7 @@ router.delete(
   })
 );
 
-// get all products
+// get all events of a shop
 router.get(
   "/get-all-events/:shopId",
   catchAsyncErrors(async (req, res, next) => {
@@ -92,5 +91,20 @@ router.get(
     }
   })
 );
+
+// all the events  of all shop
+
+router.get("/get-all-shops-events", catchAsyncErrors(async(req, res, next)=>{
+  try{
+    const totalEvents= await Event.find().sort({ createdAt: -1 });
+
+    res.status(201).json({
+      success:true,
+      totalEvents
+    })
+  }catch(error){
+    return next(new ErrorHandler(error.message, 500))
+  }
+}))
 
 module.exports = router;
