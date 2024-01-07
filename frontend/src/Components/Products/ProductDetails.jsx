@@ -5,8 +5,11 @@ import { Link, useNavigate } from "react-router-dom"
 import { backend_url } from "../../server"
 import { loadShopProducts } from "../../redux/slice/product"
 import { useDispatch, useSelector } from "react-redux"
+import { addTocart } from "../../redux/slice/cart"
+import { toast } from "react-toastify"
 
 const ProductDetails = ({ data }) => {
+    const { cart } = useSelector(state => state.cart)
     const [select, setSelect] = useState(0)
     const [count, setCount] = useState(1)
     const [click, setClick] = useState(false)
@@ -17,6 +20,25 @@ const ProductDetails = ({ data }) => {
         navigate("/conversation=123456342343")
     }
 
+    const handleAddToCart = (id) => {
+        console.log(id)
+        const isItemExists = cart && cart.find((i) =>
+            i._id === id
+        )
+        console.log(isItemExists)
+        if (isItemExists) {
+            toast.error("Item already in cart !")
+        } else {
+            if(data.stock<count){
+                toast.error("Product stock is limited!") 
+            }else{ 
+                const cartData = { ...data, qty: count }
+                dispatch(addTocart(cartData))
+                toast.success("Item added to cart successfully ")
+            }
+           
+        }
+    }
 
     return (
         <div>
@@ -79,7 +101,7 @@ const ProductDetails = ({ data }) => {
                                                     title='Add to wishlist' />
                                         }
                                     </div>
-                                    <div className={`${styles.button} mt-6 !rounded !h-11 flex items-center`}>
+                                    <div className={`${styles.button} mt-6 !rounded !h-11 flex items-center`} onClick={() => handleAddToCart(data._id)}>
                                         <span className="text-white flex items-center">
                                             Add to cart  <AiOutlineShoppingCart className="ml-1" />
                                         </span>
@@ -116,11 +138,11 @@ const ProductDetails = ({ data }) => {
 }
 
 const ProductDetailInfo = ({ data }) => {
-    const {shopProducts}= useSelector(state=>state.product)
+    const { shopProducts } = useSelector(state => state.product)
     const [active, setActive] = useState(1)
-    const dispatch=useDispatch()
+    const dispatch = useDispatch()
 
-    useEffect(()=>{
+    useEffect(() => {
         dispatch(loadShopProducts(data?.shop._id))
     }, [])
     return (
@@ -198,7 +220,7 @@ const ProductDetailInfo = ({ data }) => {
                                 </h5>
                                 <h5 className="font-[600] pt-3">
                                     Total Products: <span className="font-[500]">
-                                       {shopProducts.length}
+                                        {shopProducts.length}
                                     </span>
                                 </h5>
                                 <h5 className="font-[600] pt-3">

@@ -4,13 +4,25 @@ import styles from '../../../Styles/style'
 import { AiOutlineMessage, AiFillHeart, AiOutlineHeart, AiOutlineShoppingCart } from 'react-icons/ai'
 import { backend_url } from '../../../server'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { addTocart } from '../../../redux/slice/cart'
 const ProductDetailCard = ({ setOpen, data }) => {
+    const {cart}= useSelector(state=>state.cart)
     const [count, setCount] = useState(1)
     const [click, setClick] = useState(false)
     // const [select, setSelect] = useState(false)
+    const dispatch= useDispatch()
+
 
     const handleMessageSumbit = () => {
 
+    }
+
+    
+
+
+    const handleAddToCart = () => {
+        dispatch(addTocart(data))
     }
     return (
         <div className='bg-white '>
@@ -78,8 +90,8 @@ const ProductDetailCard = ({ setOpen, data }) => {
                                         }
                                     </div>
 
-                                    <div className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center `}>
-                                        <span className="text-[#fff] flex items-center">Add to cart
+                                    <div className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center`} onClick={handleAddToCart}>
+                                        <span className="text-[#fff] flex items-center"> Add to cart
                                             <AiOutlineShoppingCart className='ml-1' /></span>
                                     </div>
 
