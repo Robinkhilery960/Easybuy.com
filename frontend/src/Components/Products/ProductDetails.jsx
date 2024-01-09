@@ -7,9 +7,12 @@ import { loadShopProducts } from "../../redux/slice/product"
 import { useDispatch, useSelector } from "react-redux"
 import { addTocart } from "../../redux/slice/cart"
 import { toast } from "react-toastify"
+import { addToWishlist, removeFromWishlist } from "../../redux/slice/wishlist"
 
 const ProductDetails = ({ data }) => {
     const { cart } = useSelector(state => state.cart)
+    const { wishlist } = useSelector(state => state.wishlist)
+
     const [select, setSelect] = useState(0)
     const [count, setCount] = useState(1)
     const [click, setClick] = useState(false)
@@ -40,6 +43,28 @@ const ProductDetails = ({ data }) => {
         }
     }
 
+    const handleAddToWishlist = (id) => {
+        setClick(!click)
+        dispatch(addToWishlist(data))
+
+
+    }
+
+    const handleRemoveFromWishlist = (id) => {
+        setClick(!click)
+        dispatch(removeFromWishlist(data._id))
+
+    }
+
+    useEffect(() => {
+        if (wishlist && wishlist.find(item => item._id === data._id)) {
+            setClick(true)
+        }else{
+            setClick(false)
+        }
+    }, [wishlist])
+
+    
     return (
         <div>
             {
@@ -92,11 +117,11 @@ const ProductDetails = ({ data }) => {
                                         </div>
                                         {
                                             click ? <AiFillHeart size={30} className='cursor-pointer '
-                                                onClick={() => setClick(!click)}
+                                                onClick={() =>handleRemoveFromWishlist(data._id)}
                                                 color={click ? "red" : "#333"}
                                                 title='Remove from wishlist' /> :
                                                 <AiOutlineHeart size={30} className='cursor-pointer  '
-                                                    onClick={() => setClick(!click)}
+                                                    onClick={() => handleAddToWishlist(data._id)}
                                                     color={click ? "red" : "#333"}
                                                     title='Add to wishlist' />
                                         }

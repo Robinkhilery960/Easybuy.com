@@ -5,6 +5,7 @@ import productSlice from "./slice/product"
 import eventSlice from "./slice/event"
 import couponCodeSlice from "./slice/couponCode"
 import cartSlice from "./slice/cart"
+import wishlistSlice from "./slice/wishlist"
 const Store= configureStore({
     reducer:{
         user:userSlice,
@@ -12,7 +13,8 @@ const Store= configureStore({
         product:productSlice,
         event:eventSlice,
         couponCode:couponCodeSlice,
-        cart:cartSlice
+        cart:cartSlice,
+        wishlist:wishlistSlice,
     }
 })
 

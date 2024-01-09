@@ -8,10 +8,8 @@ const cartSlice=createSlice({
     name:"cart", 
     initialState,
     reducers:{
-        addTocart:(state, action)=>{
-            console.log(action .payload)
-            const item=action.payload
-            console.log(item)
+        addTocart:(state, action)=>{ 
+            const item=action.payload 
             const isItemExist=state.cart.find((i)=>i._id===item._id)
             if (isItemExist) {
                 state.cart = state.cart.map((i) => i._id === isItemExist._id ? item : i);

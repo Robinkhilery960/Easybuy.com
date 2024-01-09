@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { RxCross1 } from "react-icons/rx"
 import styles from '../../../Styles/style'
 import { AiOutlineMessage, AiFillHeart, AiOutlineHeart, AiOutlineShoppingCart } from 'react-icons/ai'
@@ -6,8 +6,11 @@ import { backend_url } from '../../../server'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { addTocart } from '../../../redux/slice/cart'
+import { addToWishlist, removeFromWishlist } from '../../../redux/slice/wishlist'
 const ProductDetailCard = ({ setOpen, data }) => {
     const {cart}= useSelector(state=>state.cart)
+    const { wishlist } = useSelector(state => state.wishlist)
+
     const [count, setCount] = useState(1)
     const [click, setClick] = useState(false)
     // const [select, setSelect] = useState(false)
@@ -18,7 +21,26 @@ const ProductDetailCard = ({ setOpen, data }) => {
 
     }
 
-    
+    const handleAddToWishlist = (id) => {
+        setClick(true)
+        dispatch(addToWishlist(data))
+
+
+    }
+
+    const handleRemoveFromWishlist = (id) => {
+        setClick(false)
+        dispatch(removeFromWishlist(data._id))
+
+    }
+
+    useEffect(() => {
+        if (wishlist && wishlist.find(item => item._id === data._id)) {
+            setClick(true)
+        }else{
+            setClick(false)
+        }
+    }, [wishlist])
 
 
     const handleAddToCart = () => {
@@ -80,11 +102,11 @@ const ProductDetailCard = ({ setOpen, data }) => {
                                         </div>
                                         {
                                             click ? <AiFillHeart size={30} className='cursor-pointer '
-                                                onClick={() => setClick(!click)}
+                                                onClick={() => handleRemoveFromWishlist(data._id)}
                                                 color={click ? "red" : "#333"}
                                                 title='Remove from wishlist' /> :
                                                 <AiOutlineHeart size={30} className='cursor-pointer  '
-                                                    onClick={() => setClick(!click)}
+                                                    onClick={() => handleAddToWishlist(data._id)}
                                                     color={click ? "red" : "#333"}
                                                     title='Add to wishlist' />
                                         }
