@@ -22,6 +22,7 @@ const ProductDetails = ({ data }) => {
     const handleMessageSumbit = () => {
         navigate("/conversation=123456342343")
     }
+    console.log(data)
 
     const handleAddToCart = (id) => {
         console.log(id)
@@ -108,7 +109,7 @@ const ProductDetails = ({ data }) => {
                                                 -
                                             </button>
                                             <span className='bg-gray-200 text-gray-600 font-medium px-4 py-[9px]'>
-                                                {count}
+                                                {data.qty?data.qty:count}
                                             </span>
                                             <button className='bg-gradient-to-r  from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out'
                                                 onClick={() => setCount(count + 1)}>
@@ -138,7 +139,10 @@ const ProductDetails = ({ data }) => {
                                         </Link>
 
                                         <div className="pr-8">
+                                        <Link to={`/shop/preview/${data.shop._id}`}>
                                             <h3 className={`${styles.shop_name} pb-1 pt-1`}>{data.shop.name}</h3>
+                                        </Link>
+
                                             <h5 className="pb-3 text-[15px]">({data.shop.ratings}) Rating</h5>
                                         </div>
                                         <div className={`${styles.button} bg-[#6443d1] mt-4 !rounded-[4px] h-11`} onClick={handleMessageSumbit}>

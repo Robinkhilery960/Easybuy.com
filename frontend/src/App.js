@@ -63,8 +63,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
-
-          <Route path="/product/:name" element={<ProductDetailPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route
             path="/shop/activation/:activationToken"
             element={<SellerActivationPage />}

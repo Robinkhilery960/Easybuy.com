@@ -15,9 +15,7 @@ const ProductCard = ({ data }) => {
     const { wishlist } = useSelector(state => state.wishlist)
 
     const [click, setClick] = useState(false)
-    const [open, setOpen] = useState(false)
-    console.log(data)
-    const product_name = data?.name?.replace(/\s+/g, "-")
+    const [open, setOpen] = useState(false) 
     const dispatch = useDispatch();
 
     const handleAddToCart = (id) => {
@@ -65,7 +63,7 @@ const ProductCard = ({ data }) => {
                     <div className='flex justify-end '>
 
                     </div>
-                    <Link to={`/product/${product_name}`}>
+                    <Link to={`/product/${data._id}`}>
                         <img src={`${backend_url}${data?.images[0]}`} alt="" className='w-full h-[170px] object-contain' />
                     </Link>
                     <Link to={`/shop/preview/${data?.shop._id}`}>
@@ -73,7 +71,7 @@ const ProductCard = ({ data }) => {
                             {data.shop.name}
                         </h5>
                     </Link>
-                    <Link to={`/product/${product_name}`}><h4 className='pb-3 font-[500]'>
+                    <Link to={`/product/${data._id}`}><h4 className='pb-3 font-[500]'>
                         {data.name.length > 20 ? data.name.slice(0, 20) + "..." : data.name}
                     </h4>
                         <div className="flex">

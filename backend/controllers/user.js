@@ -80,7 +80,7 @@ router.post(
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { activationToken } = req.body;
-      console.log("activeation is called")
+      console.log("activeation is called");
       // compare the activation token
       const userData = await jwt.verify(
         activationToken,
@@ -151,36 +151,93 @@ router.get(
   "/getuser",
   isAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
-     try {
-      console.log("i am called from getuser ", req.user)
-        if(!req.user){
-          return next(new ErrorHandler("User does not exist please signup", 400))
-        }
-        res.status(201).json({
-          success:true,
-          user:req.user
-        })
-      } catch (error) {
-        return next(new ErrorHandler(error.message, 500))
-     }
+    try {
+      console.log("i am called from getuser ", req.user);
+      if (!req.user) {
+        return next(new ErrorHandler("User does not exist please signup", 400));
+      }
+      res.status(201).json({
+        success: true,
+        user: req.user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   })
 );
 
-router.get("/logout", isAuthenticated, catchAsyncErrors(async(req, res)=>{
-  try {
-    res.cookie("token", null, {
-      expires:new Date(Date.now()),
-      httpOnly: true
-    })
+router.get(
+  "/logout",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res) => {
+    try {
+      res.cookie("token", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+      });
 
-    res.status(201).json({
-      success:true,
-      message:"Log out successful!"
-    })
-  } catch (error) {
-    return next(new ErrorHandler(error.message, 500))
-  }
-}))
+      res.status(201).json({
+        success: true,
+        message: "Log out successful!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+router.put(
+  "/updateuser",
+  isAuthenticated,
+  upload.single("image"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { name, email, password, phoneNumber } = req.body;
+      // does user exist already
+      let user = req.user;
+      if (!user) {
+        return next(new ErrorHandler("User not found", 400));
+      }
+
+      //compare password
+      const doesPasswordMatched = await user.comparePassword(password);
+      if (!doesPasswordMatched) {
+        return next(new ErrorHandler("Invalid credentials", 400));
+      }
+
+      user.name = name;
+      user.phoneNumber = phoneNumber;
+      // remove the upload image in upload directory
+      if (user) {
+        const filename = user.avatar;
+        const filePath = `uploads/${filename}`;
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.log(err.message);
+          } else {
+            console.log("Deletion of file is done");
+          }
+        });
+      }
+      const filename = req.file.filename; 
+      const fileUrl = path.join(filename);
+      console.log(fileUrl);
+
+      // make a new user
+      user.avatar = fileUrl;
+
+      await user.save();
+
+      res.status(201).json({
+        success: true,
+        message: "User updated successful!",
+        user
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
 // creatng activation token
 function createActivationToken(user) {

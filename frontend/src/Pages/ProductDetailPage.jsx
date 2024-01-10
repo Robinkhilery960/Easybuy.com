@@ -15,14 +15,13 @@ const ProductDetailPage = () => {
   const { shop } = useSelector(state => state.shop) 
 
   const [data, setData] = useState(null)
-  const { name } = useParams()
+  const { id } = useParams()
   const dispatch= useDispatch()
   
   
-  useEffect(() => {  
-    const productName = name.replace(/-/g, " ")   
+  useEffect(() => {   
       const productData = allProducts && allProducts.find((product) => { 
-        return product.name === productName
+        return product._id === id
       })
     setData(productData)
   }, [allProducts])

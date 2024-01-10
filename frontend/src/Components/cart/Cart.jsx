@@ -80,6 +80,7 @@ const CartSingle = ({ data }) => {
         toast.success("Item removed from cart!")
     }
     const handleQtyChange = (data) => {
+        console.log(data)
         dispatch(addTocart(data))
     }
 

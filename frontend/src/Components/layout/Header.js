@@ -78,10 +78,9 @@ const Header = ({ activeHeading }) => {
 
             {search && searchData.length ? (
               <div className="absolute min-h-[130vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                {searchData.map((product, index) => {
-                  const product_name = product.name.replace(/\s+/g, "-");
+                {searchData.map((product, index) => { 
                   return (
-                    <Link to={`/product/${product_name}`}>
+                    <Link to={`/product/${product._id}`}>
                       <div className="w-fullflex items-start py-3">
                         <img
                           src={`${backend_url}${product.images[0]}`}
@@ -187,7 +186,7 @@ const Header = ({ activeHeading }) => {
                   {isAuthenticated ? (
                     <Link to="/profile">
                       <img
-                        src={`${backend_url}` + user.avatar}
+                        src={`${backend_url}` + user?.avatar}
                         className="w-[35px] h-[35px] rounded-full"
                       />
                     </Link>
@@ -282,10 +281,9 @@ const Header = ({ activeHeading }) => {
 
                 {search && searchData.length ? (
                   <div className="absolute min-h-[130vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                    {searchData.map((product, index) => {
-                      const product_name = product.name.replace(/\s+/g, "-");
+                    {searchData.map((product, index) => { 
                       return (
-                        <Link to={`/product/${product_name}`}>
+                        <Link to={`/product/${product.id}`}>
                           <div className="w-fullflex items-start py-3">
                             <img
                               src={`${backend_url}${product.images[0]}`}

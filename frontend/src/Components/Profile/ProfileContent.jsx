@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { backend_url } from '../../server'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { AiOutlineArrowRight, AiOutlineCamera, AiOutlineDelete } from 'react-icons/ai'
 import { MdOutlineTrackChanges } from 'react-icons/md'
 
@@ -8,23 +8,45 @@ import styles from '../../Styles/style'
 import { Link } from 'react-router-dom'
 import { Button } from "@material-ui/core"
 import { DataGrid } from "@material-ui/data-grid"
+import { updateUser } from '../../redux/slice/user'
+import { toast } from 'react-toastify'
 
 
 const ProfileContent = ({ active }) => {
-    const { user } = useSelector(state => state.user)
+    const { user, isError } = useSelector(state => state.user)
     const [name, setName] = useState(user && user.name)
     const [email, setEmail] = useState(user && user.email)
-    const [phoneNumber, setPhoneNumber] = useState()
-    const [zipCode, setZipCode] = useState()
-    const [address1, setAddress1] = useState("")
-    const [address2, setAddress2] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber)
+    const [password, setPassword] = useState("")
+    const [avatar, setAvatar] = useState(null);
 
+    const dispatch = useDispatch()
     const handleSubmit = (e) => {
         e.preventDefault()
+        const config = { headers: { "Content-Type": "multipart/form-data" } }
 
+        const newForm = new FormData()
+        newForm.append("name", name)
+        newForm.append("email", email)
+        newForm.append("password", password)
+        newForm.append("phoneNumber", phoneNumber)
+        newForm.append("image", avatar) 
+        dispatch(updateUser(newForm))
     }
+
+    const handleFileInutChange = (e) => {
+        const file = e.target.files[0]
+        setAvatar(file)
+    }
+
+    useEffect(() => {
+        if (isError) {
+            toast.error("Invalid credentials")
+        }
+    }, [isError])
+
     return (
-        <div className='w-full'>
+         <div className='w-full'>
             {/* Profile    */}
             {
                 active === 1 && (
@@ -33,11 +55,17 @@ const ProfileContent = ({ active }) => {
                             <div className="relative">
 
                                 <img
-                                    src={`${backend_url}` + user?.avatar}
+                                    src={avatar ? URL.createObjectURL(avatar) : `${backend_url}` + user?.avatar}
                                     className="w-[150px] h-[150px] rounded-full object-cover border-[3px] border-[#3ad132]" alt=""
                                 />
+
                                 <div className="w-[30px] h-[30px] bg-[#E3E9EE] rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">
-                                    <AiOutlineCamera />
+                                    <label htmlFor="image" className=' '>
+                                        <span><AiOutlineCamera /> </span>
+                                    </label>
+                                    <input type="file" name="image" id="image" accept='.jpg ,.jpeg, .png' onChange={handleFileInutChange}
+                                        className='sr-only hidden' />
+
                                 </div>
 
 
@@ -59,7 +87,7 @@ const ProfileContent = ({ active }) => {
                                     <div className="w-[100%] 800px:w-[50%]">
 
                                         <label className='block pb-2  800px:pt-0 pt-2 '>Email</label>
-                                        <input type="text" className={`${styles.input} !w-[95%]`} require value={email} onChange={(e) => setEmail(e.target.value)} />
+                                        <input type="email" className={`${styles.input} !w-[95%]`} require value={email} onChange={(e) => setEmail(e.target.value)} />
                                     </div>
                                 </div>
 
@@ -71,29 +99,14 @@ const ProfileContent = ({ active }) => {
                                     </div>
 
                                     <div className="w-[100%] 800px:w-[50%]">
-
-                                        <label className='block pb-2 '>Zip Code</label>
-                                        <input type="number" className={`${styles.input} !w-[95%]`} require value={zipCode} onChange={(e) => setZipCode(e.target.value)} />
+                                        <label className='block pb-2 '>Password</label>
+                                        <input type="password" className={`${styles.input} !w-[95%]`} require value={password} onChange={(e) => setPassword(e.target.value)} />
                                     </div>
 
 
                                 </div>
 
-                                <div className="w-full flex pb-5">
-                                    <div className="w-[100%] 800px:w-[50%]">
 
-                                        <label className='block pb-2 '>Address 1</label>
-                                        <input type="number " className={`${styles.input} !w-[95%]`} require value={address1} onChange={(e) => setAddress1(e.target.value)} />
-                                    </div>
-
-                                    <div className="w-[100%] 800px:w-[50%]">
-
-                                        <label className='block pb-2 '>Zip Code</label>
-                                        <input type="number" className={`${styles.input} !w-[95%]`} require value={address2} onChange={(e) => setAddress2(e.target.value)} />
-                                    </div>
-
-
-                                </div>
                                 <input type="submit" className={`w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer`} required value="Update" />
                             </form>
                         </div>
@@ -437,10 +450,10 @@ const Address = () => {
 
                     <h5 className="pl-5 font-[600]">Default</h5>
                 </div>
-                <div className="pl-8 flex items-center"> 
+                <div className="pl-8 flex items-center">
                     <h5 className="pl-6">495 Erdman Passage, New Zoietown, Paragway</h5>
                 </div>
-                <div className="pl-8 flex items-center"> 
+                <div className="pl-8 flex items-center">
                     <h5 className="pl-6"> (123) 840-9416</h5>
                 </div>
                 <div className="min-w-[10%] flex items-center justify-between pl-8">
