@@ -6,10 +6,11 @@ const Shop = require("../modal/shop");
 exports.isAuthenticated = catchAsyncErrors(async(req, res, next) => {
   //extract token from cookies
   try {
+    console.log("tokne", req.cookies)
     const { token } = req.cookies;
     console.log("i am called  from isAuthenticated", token);
 
-    // if token valid
+    // if token invalid
     if (!token) {
       return next(new Error("Please login", 500));
     }
