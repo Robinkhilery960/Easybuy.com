@@ -272,6 +272,7 @@ router.put(
   })
 );
 
+// delete address
 router.delete(
   "/delete-user-address/:id",
   isAuthenticated,
@@ -296,6 +297,37 @@ router.delete(
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
+  })
+);
+
+// update user password
+
+router.put(
+  "/update-user-password",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    // take data from frontend
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+    if (newPassword !== confirmNewPassword) {
+      return next(
+        new ErrorHandler("Confirm Password not matched with new Password", 401)
+      );
+    }
+    // compare current password with password stored in database
+    const user = req.user;
+    const isPasswordValid = await user.comparePassword(currentPassword);
+    if (!isPasswordValid) {
+      return next(new ErrorHandler("Invalid Credentials", 400));
+    }
+    // if password matched then update the password
+    user.password = newPassword;
+    await user.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Password updated successfully !!",
+      user,
+    });
   })
 );
 

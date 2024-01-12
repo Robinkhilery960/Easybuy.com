@@ -9,16 +9,16 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [visible, setVisible] = useState(false);
-    const navigate=useNavigate()
-     
-    const handleSubmit=  (e)=>{
+    const navigate = useNavigate()
+
+    const handleSubmit = (e) => {
         e.preventDefault()
-         axios.post(`${server}/user/login-user`,{email, password}, {withCredentials:true}).then((res)=>{
-                toast.success("Login Successful")
-                console.log(res.data)
-                navigate("/")
-                window.location.reload(true)
-        }).catch((error)=>{
+        axios.post(`${server}/user/login-user`, { email, password }, { withCredentials: true }).then((res) => {
+            toast.success("Login Successful")
+            console.log(res.data)
+            navigate("/")
+            window.location.reload(true)
+        }).catch((error) => {
             toast.error(error.response.data.message)
         })
     }

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { backend_url } from "../../server";
+import { backend_url, server } from "../../server";
 import { useDispatch, useSelector } from "react-redux";
 import {
     AiOutlineArrowRight,
     AiOutlineCamera,
     AiOutlineDelete,
+    AiOutlineEye,
+    AiOutlineEyeInvisible,
 } from "react-icons/ai";
 import { MdOutlineTrackChanges } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
@@ -15,6 +17,7 @@ import { DataGrid } from "@material-ui/data-grid";
 import { clearErrors, deleteUserAddress, updateUser, updateUserAddress } from "../../redux/slice/user";
 import { toast } from "react-toastify";
 import { RxCross1 } from "react-icons/rx";
+import axios from "axios";
 
 const ProfileContent = ({ active }) => {
     const { user, isError } = useSelector((state) => state.user);
@@ -173,7 +176,7 @@ const ProfileContent = ({ active }) => {
             {/* payment method    */}
             {active === 6 && (
                 <div>
-                    <PaymentMethod />
+                    <ChangePassword />
                 </div>
             )}
 
@@ -447,34 +450,82 @@ const TrackOrder = () => {
     );
 };
 
-const PaymentMethod = () => {
+const ChangePassword = () => {
+    const [currentPassword, setCurrentPassword] = useState("")
+    const [newPassword, setNewPassword] = useState("")
+    const [confirmNewPassword, setConfirmNewPassword] = useState("")
+    const [currentVisible, setCurrentVisible] = useState(false)
+    const [newVisible, setNewVisible] = useState(false)
+    const [confirmVisible, setConfirmVisible] = useState(false)
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        try {
+            const response = await axios.put(`${server}/user/update-user-password`, { currentPassword, newPassword, confirmNewPassword }, {
+                withCredentials: true,
+            });
+            toast.success(response.data.message)
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
     return (
         <div className="w-full px-5">
-            <div className="flex w-full items-center justify-between">
-                <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2 ">
-                    Payment Methods
-                </h1>
-                <div className={` ${styles.button}!rounded-md`}>
-                    <span className="text-[#fff]">Add New</span>
-                </div>
-            </div>
+
+            <h1 className="text-[25px] text-center font-[600] text-[#000000ba] pb-2 ">
+                Change Password
+            </h1>
             <br />
-            <div className="w-full bg-white h-[70px] rounded-[4px] flex items-center px-3 shadow justify-between pr-10">
-                <div className="flex items-center">
-                    <img
-                        src="https://bonik-react.vercel.app/assets/images/payment-methods/Visa.svg"
-                        alt=""
+            <form area-required onSubmit={handleSubmit} className="flex flex-col items-center justify-center">
+                <div className=" w-[100%] 800px:w-[50%] relative">
+                    <label className="block pb-2  ">Enter you current password</label>
+                    <input
+                        type={currentVisible ? "text" : "password"}
+                        className={`${styles.input} !w-[95%] relative`}
+                        require
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
                     />
-                    <h5 className="pl-5 font-[600]">Robin Khilery</h5>
+                    {
+                        currentPassword && (currentVisible ? (<AiOutlineEye className="absolute right-10 top-9 cursor-pointer" size={25} onClick={() => setCurrentVisible(false)} />) :
+                            (<AiOutlineEyeInvisible className="absolute right-10 top-9 cursor-pointer" size={25} onClick={() => setCurrentVisible(true)} />))
+                    }
                 </div>
-                <div className="pl-8 flex items-center">
-                    <h6>123 **** **** ****</h6>
-                    <h5 className="pl-6">08/2028</h5>
+                <div className=" w-[100%] 800px:w-[50%] mt-2 relative">
+                    <label className="block pb-2 ">Enter you new password</label>
+                    <input
+                        type={newVisible ? "text" : "password"}
+                        className={`${styles.input} !w-[95%]`}
+                        require
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                    {
+                        newPassword && (newVisible ? (<AiOutlineEye className="absolute right-10 top-9 cursor-pointer" size={25} onClick={() => setNewVisible(false)} />) :
+                            (<AiOutlineEyeInvisible className="absolute right-10 top-9 cursor-pointer" size={25} onClick={() => setNewVisible(true)} />))
+                    }
                 </div>
-                <div className="min-w-[10%] flex items-center justify-between pl-8">
-                    <AiOutlineDelete size={25} className="cursor-pointer" />
+                <div className=" w-[100%] 800px:w-[50%] mt-2 relative">
+                    <label className="block pb-2 ">Confirm you new password</label>
+                    <input
+                        type={confirmVisible ? "text" : "password"}
+                        className={`${styles.input} !w-[95%]`}
+                        require
+                        value={confirmNewPassword}
+                        onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    />
+                    {
+                        confirmNewPassword && (confirmVisible ? (<AiOutlineEye className="absolute right-10 top-9 cursor-pointer" size={25} onClick={() => setConfirmVisible(false)} />) :
+                            (<AiOutlineEyeInvisible className="absolute right-10 top-9 cursor-pointer" size={25} onClick={() => setConfirmVisible(true)} />))
+                    }
                 </div>
-            </div>
+                <input
+                    type="submit"
+                    className="w-[50%] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer"
+                    required
+                    value="Update"
+                />
+            </form>
+
         </div>
     );
 };
@@ -743,7 +794,7 @@ const Address = () => {
                     ))
                 }
                 {
-                    user && user.addresses.length===0  && (
+                    user && user.addresses.length === 0 && (
                         <h5 className="text-center pt-8 text-[18px]">You don't have any saved address</h5>
                     )
                 }
