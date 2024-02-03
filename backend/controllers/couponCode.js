@@ -81,4 +81,23 @@ router.get(
   })
 );
 
+// get a single couponCode 
+router.get(
+  "/get-single-couponCode/:name", 
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      // get the shop id from param
+      const { name } = req.params;
+      // make a requet to the coupon collection wtih this shop id
+      const couponCode = await CouponCode.findOne({ name });
+      res.status(200).json({
+        success: true,
+        couponCode,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+
 module.exports = router;

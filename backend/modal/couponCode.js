@@ -9,7 +9,7 @@ const couponCodeSchema = new mongoose.Schema({
   value: {
     type: Number,
     required: true,
-  },
+},
   minAmount: {
     type: Number,
   },

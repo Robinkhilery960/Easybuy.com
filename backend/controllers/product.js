@@ -6,7 +6,7 @@ const Shop = require("../modal/shop");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Product = require("../modal/product");
 const { isShopAuthenticated } = require("../middlewares/auth");
-const fs= require("fs")
+const fs = require("fs");
 
 // create product
 
@@ -48,15 +48,14 @@ router.delete(
     // find  and delete this product
     try {
       const deletedProduct = await Product.findByIdAndDelete(id);
-        console.log("deletedProduct", deletedProduct)
+      console.log("deletedProduct", deletedProduct);
       if (!deletedProduct) {
         return next(new ErrorHandler("Product not found to delete", 500));
       }
 
-       
       deletedProduct.images.forEach((image) => {
         const filePath = `uploads/${image}`;
-        console.log(filePath)
+        console.log(filePath);
         fs.unlink(filePath, (err) => {
           if (err) {
             console.log(err.message);
@@ -64,7 +63,7 @@ router.delete(
             console.log("Deletion of file is done");
           }
         });
-      }); 
+      });
 
       res.status(200).json({
         message: "Product deleted successfully",
@@ -95,17 +94,16 @@ router.get(
   })
 );
 
-
 // get all products of all shops
 
 router.get(
   "/get-all-shops-products",
   catchAsyncErrors(async (req, res, next) => {
-    try {   
-      const allProducts =  await Product.find().sort({ createdAt: -1 }); 
+    try {
+      const allProducts = await Product.find().sort({ createdAt: -1 });
       res.status(200).json({
         success: true,
-      allProducts,
+        allProducts,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 500));
