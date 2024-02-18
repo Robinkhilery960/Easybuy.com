@@ -26,6 +26,7 @@ import {
   CreateShopPage,
   SellerActivationPage,
   LoginShopPage,
+  PaymentPage,
 } from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -36,20 +37,43 @@ import { loadUser } from "./redux/slice/user.js";
 import ProtectedRoute from "./routes/ProtectedRoute.js";
 import { loadShop } from "./redux/slice/shop.js";
 import ProtectedShopRoute from "./routes/ProtectedShopRoutes.js";
-import { loadAllProducts } from "./redux/slice/product.js"; 
+import { loadAllProducts } from "./redux/slice/product.js";
 import { loadAllEvents, loadAllShopsEvents } from "./redux/slice/event.js";
 
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 const App = () => {
+  const [stripeApikey, setStripeApiKey] = useState("");
   const dispatch = useDispatch();
+
+  const getStripeApiKey = async () => {
+    const { data } = await axios.get(`${server}/payment/stripeapikey`);
+    setStripeApiKey(data.stripeApikey);
+  };
   useEffect(() => {
     dispatch(loadUser());
     dispatch(loadShop());
     dispatch(loadAllProducts());
     dispatch(loadAllShopsEvents());
+    getStripeApiKey();
   }, []);
   return (
     <>
       <BrowserRouter>
+        {stripeApikey && (
+          <Elements stripe={loadStripe(stripeApikey)}>
+            <Routes>
+              <Route
+                path="/payment"
+                element={
+                  <ProtectedRoute>
+                    <PaymentPage />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+          </Elements>
+        )}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />

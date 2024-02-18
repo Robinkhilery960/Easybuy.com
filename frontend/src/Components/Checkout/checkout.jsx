@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import axios from 'axios'
 import { server } from '../../server'
 import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 
 
 const Checkout = () => {
@@ -20,8 +21,26 @@ const Checkout = () => {
     const [couponCode, setCouponCode] = useState("")
     const [couponCodeData, setCouponCodeData] = useState("")
     const [discountPrice, setDiscountPrice] = useState("")
+    let navigate = useNavigate()
 
     const paymentSubmit = () => {
+        if (address1 === "" || address2 === "" || zipCode === null || country === "" || state === "") {
+            return toast.error("Please choose your delivery address")
+        } else {
+            let shippingAddress = {
+                address1,
+                address2,
+                zipCode,
+                country,
+                state
+            }
+            let orderData = {
+                cart, totalPrice, subTotalPrice, shippingAddress, shippingCost, discountPrice, user
+            }
+
+            localStorage.setItem("lastOrder", JSON.stringify(orderData))
+            navigate("/payment")
+        }
 
     }
 

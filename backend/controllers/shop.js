@@ -160,7 +160,7 @@ router.post(
           new ErrorHandler("Shop not found, Please register your  shop ", 400)
         );
       }
-
+        
       // comapre password
       const isPasswordValid = await shop.comparePassword(password);
       console.log(isPasswordValid);
