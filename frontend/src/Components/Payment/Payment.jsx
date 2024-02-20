@@ -12,11 +12,13 @@ import {
     useElements,
 } from "@stripe/react-stripe-js";
 import { useSelector } from 'react-redux'
-
+import { RxCross1 } from 'react-icons/rx'
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js"
 
 const Payment = () => {
     const [orderData, setOrderData] = useState([])
     const { user } = useSelector((state) => state.user)
+    const [open, setOpen] = useState(false)
     const stripe = useStripe()
     const elements = useElements()
     const navigate = useNavigate()
@@ -55,6 +57,7 @@ const Payment = () => {
 
                 await axios.post(`${server}/order/create-order/`, order, { withCredentials: true }).then((res) => {
                     toast.success("Order created successfully")
+                    setOpen(false)
                     localStorage.setItem("cartItems", JSON.stringify([]))
                     localStorage.setItem("lastOrder", JSON.stringify([]))
                     navigate("/order/success")
@@ -66,6 +69,53 @@ const Payment = () => {
         }
     }
 
+    const createOrder = (data, actions) => {
+        return actions.order.create({
+            purchase_units: [
+                {
+                    description: "1st Order",
+                    amount: {
+                        currency_code: "USD",
+                        value: orderData?.totalPrice
+                    }
+                }
+            ],
+            application_context: {
+                shipping_preference: "NO_SHIPPING",
+            }
+        }).then((orderID) => {
+            return orderID
+        })
+    }
+
+    const onApprove = (data, actions) => {
+        return actions.order.capture().then((details) => {
+            let { payer } = details
+            let paymentInfo = payer
+            if (paymentInfo) {
+                paypalPaymentHandler(paymentInfo)
+            }
+        })
+    }
+    const paypalPaymentHandler = async (paymentInfo) => {
+        try {
+            order.paymentInfo = {
+                id: paymentInfo.payer_id,
+                status: "succeeded",
+                type: "Paypal"
+            }
+            axios.post(`${server}/order/create-order/`, order, { withCredentials: true }).then((res) => {
+                toast.success("Order created successfully")
+                setOpen(false)
+                localStorage.setItem("cartItems", JSON.stringify([]))
+                localStorage.setItem("lastOrder", JSON.stringify([]))
+                navigate("/order/success")
+                window.location.reload()
+            })
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
 
     useEffect(() => {
         const orderData = JSON.parse(localStorage.getItem("lastOrder"))
@@ -75,7 +125,7 @@ const Payment = () => {
         <div className='w-full flex flex-col items-center py-8'>
             <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
                 <div className="w-full 800px:w-[65%]">
-                    <PaymentInfo user={user} paymentHandler={paymentHandler} />
+                    <PaymentInfo user={user} paymentHandler={paymentHandler} open={open} setOpen={setOpen} onApprove={onApprove} createOrder={createOrder} />
                 </div>
                 <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
                     <CardData orderData={orderData} />
@@ -87,7 +137,7 @@ const Payment = () => {
 }
 
 
-const PaymentInfo = ({ user, paymentHandler }) => {
+const PaymentInfo = ({ user, paymentHandler, open, setOpen, onApprove, createOrder }) => {
     const [select, setSelect] = useState(1)
 
 
@@ -190,6 +240,7 @@ const PaymentInfo = ({ user, paymentHandler }) => {
                 </div>) : null
                 }
             </div>
+
             <br />
 
             <div className="flex w-full pb-5 border-b mb-2">
@@ -210,18 +261,33 @@ const PaymentInfo = ({ user, paymentHandler }) => {
             {/* pay with paypal */}
             <div>
                 {select === 2 ? (<div className="w-full flex border-b">
-                    <form className='full' onSubmit={paymentHandler}>
-                        <div className="w-full flex pb-3">
-                            <div className="w-full">
-                                <label className='block pb-2'>Paypal Email</label>
-                                <input type="required" className={`${styles.input}`} />
-                            </div>
-                        </div>
+                    <div className={`${styles.button} !bg-[#f63b60] text-[#fff] h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`} onClick={() => setOpen(true)}>Pay Now</div>
+                    {
+                        open && (
 
-                        <input type="submit" value="Submit" className={`${styles.button} !bg-[#f63b60] text-[#fff] h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`} />
-                    </form>
+                            <div className="w-full  fixed top-0 left-0 h-screen bg-[#0000005e] z-[99999] flex items-center justify-center">
+                                <div className="w-full 800px:w-[40%] h-screen 800px:h-[80vh] bg-white rounded-[5px] shadow flex flex-col justify-center p-8 relative overflow-y-scroll">
+                                    <div className="w-full flex justify-end p-3">
+                                        <RxCross1
+                                            size={30}
+                                            className="cursor-pointer absolute top-3 right-3"
+                                            onClick={() => setOpen(false)}
+                                        />
+                                    </div>
+                                    <PayPalScriptProvider options={{
+                                        "clientId": process.env.REACT_APP_CLIENT_ID,
+                                        currency: "USD"
+                                    }}>
+                                        <PayPalButtons style={{ layout: "vertical" }} onApprove={onApprove} createOrder={createOrder}>
+                                        </PayPalButtons>
+                                    </PayPalScriptProvider>
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>) : null
                 }
+
             </div>
             <br />
             {/* cash on delivery */}
@@ -254,7 +320,7 @@ const PaymentInfo = ({ user, paymentHandler }) => {
                 ) : null}
             </div>
 
-        </div>
+        </div >
     )
 }
 
@@ -265,29 +331,26 @@ const CardData = ({ orderData }) => {
         <div className='w-full bg-[#fff] rounded-md p-5 pb-8'>
             <div className="flex justify-between">
                 <h3 className="text-[16px] font-[400] text-[#000000a4]">subtotal:</h3>
-                <h5 className='text-[18px] font-[600]'>{orderData.subTotalPrice}</h5>
+                <h5 className='text-[18px] font-[600]'>$ {orderData.subTotalPrice} </h5>
             </div>
             <br />
             <div className="flex justify-between">
                 <h3 className="text-[16px] font-[400] text-[#000000a4]">shipping:</h3>
-                <h5 className='text-[18px] font-[600]'>{orderData?.shippingCost}</h5>
+                <h5 className='text-[18px] font-[600]'>$ {orderData?.shippingCost?.toFixed(2)}</h5>
             </div>
             <br />
             <div className="flex justify-between border-b pb-3">
                 <h3 className="text-[16px] font-[400] text-[#000000a4]">Discount:</h3>
-                <h5 className='text-[18px] font-[600]'>-{
-                    orderData?.discountPrice
+                <h5 className='text-[18px] font-[600]'>{
+                    orderData?.discountPrice ? "$" + (orderData?.discountPrice) : ""
                 }</h5>
             </div>
             <div className="flex justify-between items-center">
                 <h3 className="text-[16px] font-[400] text-[#000000a4]">Total:</h3>
-                <h5 className='text-[18px] font-[600] text-end pt-3'>{orderData?.totalPrice}</h5>
+                <h5 className='text-[18px] font-[600] text-end pt-3'>$ {orderData?.totalPrice}</h5>
             </div>
             <br />
-            <form  >
-                <input type="text" className={`${styles.input} h-[40px] pl-2`} placeholder='Coupon Code' required />
-                <input type="submit" className={`w-full h-[40px] border border-[#F63B60] text-center text-[#f63b60] rounded-[3px] mt-8 cursor-pointer`} required value="Apply code" />
-            </form>
+
         </div>
     )
 }
