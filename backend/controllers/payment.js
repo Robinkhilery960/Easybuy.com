@@ -1,7 +1,10 @@
 const express = require("express");
+const { config } = require("../config/index");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const ErrorHandler = require("../utils/ErrorHandler");
+const stripe = require("stripe")(config.STRIPE_SECRET_KEY);
+
 const router = express.Router();
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 router.post(
   "/process",
@@ -12,6 +15,16 @@ router.post(
         currency: "inr",
         metadata: {
           company: "MyCompany",
+        }, 
+        description: "$5 for 5 credits",
+        shipping: {
+          name: "Customer Name",
+          address: {
+            line1: "Customer Address",
+            city: "Customer City",
+            country: "US",
+            postal_code: "12345",
+          },
         },
       });
 
@@ -26,10 +39,10 @@ router.post(
 );
 
 router.get(
-    "/stripeapikey",
-    catchAsyncErrors(async (req, res, next) => {
-      res.status(200).json({ stripeApikey: process.env.STRIPE_API_KEY });
-    })
-  );
+  "/stripeapikey",
+  catchAsyncErrors(async (req, res, next) => {
+    res.status(200).json({ stripeApikey: process.env.STRIPE_API_KEY });
+  })
+);
 
 module.exports = router;

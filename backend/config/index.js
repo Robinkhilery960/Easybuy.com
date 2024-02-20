@@ -13,4 +13,6 @@ exports.config = {
   SMPT_MAIL: process.env.SMPT_MAIL,
   SMPT_PASSWORD: process.env.SMPT_PASSWORD,
   SMPT_SERVICE: process.env.SMPT_SERVICE,
+  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+  STRIPE_API_KEY: process.env.STRIPE_API_KEY, 
 };

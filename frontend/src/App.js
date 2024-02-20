@@ -27,6 +27,7 @@ import {
   SellerActivationPage,
   LoginShopPage,
   PaymentPage,
+  OrderSuccessPage
 } from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -108,6 +109,7 @@ const App = () => {
             }
           />
 
+          <Route path="/order/success" element={<OrderSuccessPage />} />
           {/* Shop Routes */}
 
           <Route path="/create-shop" element={<CreateShopPage />} />

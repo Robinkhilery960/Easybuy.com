@@ -24,12 +24,14 @@ const product = require("./controllers/product");
 const event = require("./controllers/event");
 const couponCode = require("./controllers/couponCode");
 const payment = require("./controllers/payment");
+const order = require("./controllers/order");
 app.use("/api/v2/user", user);
 app.use("/api/v2/shop", shop);
 app.use("/api/v2/product", product);
 app.use("/api/v2/event", event);
 app.use("/api/v2/couponCode", couponCode);
 app.use("/api/v2/payment", payment);
+app.use("/api/v2/order", order);
 
 // ErrorHandling
 app.use(ErrorHandler);

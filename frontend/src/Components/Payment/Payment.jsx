@@ -13,9 +13,60 @@ import {
 } from "@stripe/react-stripe-js";
 import { useSelector } from 'react-redux'
 
+
 const Payment = () => {
     const [orderData, setOrderData] = useState([])
     const { user } = useSelector((state) => state.user)
+    const stripe = useStripe()
+    const elements = useElements()
+    const navigate = useNavigate()
+    const paymentData = {
+        amount: Math.round(orderData?.totalPrice * 100)
+    }
+    const order = {
+        cart: orderData?.cart,
+        shippingAddress: orderData?.shippingAddress,
+        user: orderData?.user,
+        totalPrice: orderData?.totalPrice
+    }
+    const paymentHandler = async (e) => {
+        e.preventDefault()
+        try {
+            const { data } = await axios.post(`${server}/payment/process`, paymentData)
+
+            const client_secret = data.client_secret
+            console.log("client_secret", client_secret)
+            if (!stripe || !elements) return
+            const result = await stripe.confirmCardPayment(client_secret, {
+                payment_method: {
+                    card: elements.getElement(CardNumberElement)
+                }
+            })
+            if (result.error) {
+                toast.error(result.error.message)
+            } else {
+                if (result.paymentIntent.status === "succeeded") {
+                    order.paymentInfo = {
+                        id: result.paymentIntent.id,
+                        status: result.paymentIntent.status,
+                        type: "Credit Card"
+                    }
+                }
+
+                await axios.post(`${server}/order/create-order/`, order, { withCredentials: true }).then((res) => {
+                    toast.success("Order created successfully")
+                    localStorage.setItem("cartItems", JSON.stringify([]))
+                    localStorage.setItem("lastOrder", JSON.stringify([]))
+                    navigate("/order/success")
+                    window.location.reload()
+                })
+            }
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
+
+
     useEffect(() => {
         const orderData = JSON.parse(localStorage.getItem("lastOrder"))
         setOrderData(orderData)
@@ -24,7 +75,7 @@ const Payment = () => {
         <div className='w-full flex flex-col items-center py-8'>
             <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
                 <div className="w-full 800px:w-[65%]">
-                    <PaymentInfo user={user} />
+                    <PaymentInfo user={user} paymentHandler={paymentHandler} />
                 </div>
                 <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
                     <CardData orderData={orderData} />
@@ -36,11 +87,9 @@ const Payment = () => {
 }
 
 
-const PaymentInfo = ({ user }) => {
+const PaymentInfo = ({ user, paymentHandler }) => {
     const [select, setSelect] = useState(1)
-    const paymentHandler = () => {
 
-    }
 
     return (
         <div className='w-full 800px:w-[95%] bg-white rounded-md p-5 pb-8'>
