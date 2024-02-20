@@ -24,8 +24,7 @@ const ProductDetails = ({ data }) => {
     }
     console.log(data)
 
-    const handleAddToCart = (id) => {
-        console.log(id)
+    const handleAddToCart = (id) => { 
         const isItemExists = cart && cart.find((i) =>
             i._id === id
         )

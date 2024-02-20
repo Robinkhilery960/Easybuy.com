@@ -12,28 +12,39 @@ import { loadAllProducts, loadShopProducts } from '../redux/slice/product.js'
 
 const ProductDetailPage = () => {
   const { allProducts } = useSelector(state => state.product)
-  const { shop } = useSelector(state => state.shop) 
+  const { allEvents } = useSelector(state => state.event)
+  const { shop } = useSelector(state => state.shop)
 
   const [data, setData] = useState(null)
   const { id } = useParams()
-  const dispatch= useDispatch()
-  
-  
-  useEffect(() => {   
-      const productData = allProducts && allProducts.find((product) => { 
+  const dispatch = useDispatch()
+  const [searchParams] = useSearchParams();
+  const eventData = searchParams.get("isEvent");
+
+
+  useEffect(() => {
+    if (!eventData) {
+      const productData = allProducts && allProducts.find((product) => {
         return product._id === id
       })
-    setData(productData)
-  }, [allProducts])
-    
+      setData(productData)
+    } else {
+      const productData = allEvents && allEvents.find((event) => {
+        return event._id === id
+      })
+      setData(productData)
+    }
+
+  }, [allProducts, allEvents])
+
   return (
     <>
       {
-        data   ? (<div>
+        data ? (<div>
           <Header activeHeading={3} />
           <ProductDetails data={data} />
           {
-            data ? (<SuggestedProduct data={data} />) : null
+            !eventData ? (<SuggestedProduct data={data} />) : null
           }
           <Footer />
         </div>) : (<Loader />)
