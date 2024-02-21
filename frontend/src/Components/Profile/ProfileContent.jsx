@@ -18,6 +18,7 @@ import { clearErrors, deleteUserAddress, updateUser, updateUserAddress } from ".
 import { toast } from "react-toastify";
 import { RxCross1 } from "react-icons/rx";
 import axios from "axios";
+import { loadUserOrders } from "../../redux/slice/order";
 
 const ProfileContent = ({ active }) => {
     const { user, isError } = useSelector((state) => state.user);
@@ -155,7 +156,7 @@ const ProfileContent = ({ active }) => {
             {/* order    */}
             {active === 2 && (
                 <div>
-                    <AllOrders />
+                    <AllOrders user={user} />
                 </div>
             )}
 
@@ -190,19 +191,9 @@ const ProfileContent = ({ active }) => {
     );
 };
 
-const AllOrders = () => {
-    const orders = [
-        {
-            _id: "876rtdvg2ifg2iubd283",
-            orderItems: [
-                {
-                    name: "Iphone 14 pro max",
-                },
-            ],
-            totalPrice: 120,
-            orderStatus: "Processing",
-        },
-    ];
+const AllOrders = ({ user }) => {
+    const { userOrders } = useSelector((state) => state.order);
+    const dispatch = useDispatch()
 
     const columns = [
         {
@@ -245,7 +236,7 @@ const AllOrders = () => {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={`/order/${params.id}`}>
+                        <Link to={`/user/order/${params.id}`}>
                             <Button>
                                 <AiOutlineArrowRight size={20} />
                             </Button>
@@ -258,15 +249,19 @@ const AllOrders = () => {
 
     const row = [];
 
-    orders &&
-        orders.forEach((item) => {
+    userOrders &&
+        userOrders.forEach((item) => {
             row.push({
                 id: item._id,
-                itemsQty: item.orderItems.length,
+                itemsQty: item.cart?.length,
                 total: "US$" + item.totalPrice,
-                status: item.orderStatus,
+                status: item?.status,
             });
         });
+
+    useEffect(() => {
+        dispatch(loadUserOrders(user._id))
+    }, [])
     return (
         <div className="pl-8 pt-1">
             <DataGrid

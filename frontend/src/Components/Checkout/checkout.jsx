@@ -211,7 +211,7 @@ const CardData = ({ cart, subTotalPrice, totalPrice, shippingCost, couponCode, s
             </div>
             <div className="flex justify-between items-center">
                 <h3 className="text-[16px] font-[400] text-[#000000a4]">Total:</h3>
-                <h5 className='text-[18px] font-[600] text-end pt-3'>{totalPrice}</h5>
+                <h5 className='text-[18px] font-[600] text-end pt-3'>$ {totalPrice?.toFixed(2)}</h5>
             </div>
             <br />
             <form  >

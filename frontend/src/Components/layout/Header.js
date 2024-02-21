@@ -19,6 +19,9 @@ import Wishlist from "../../Components/Wishlist/Wishlist.jsx";
 import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
+  const { isShopAuthenticated, isShopLoading } = useSelector(
+    (state) => state.shop
+  );
   const { allProducts } = useSelector((state) => state.product);
   const { cart } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -78,7 +81,7 @@ const Header = ({ activeHeading }) => {
 
             {search && searchData.length ? (
               <div className="absolute min-h-[130vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                {searchData.map((product, index) => { 
+                {searchData.map((product, index) => {
                   return (
                     <Link to={`/product/${product._id}`}>
                       <div className="w-fullflex items-start py-3">
@@ -98,8 +101,8 @@ const Header = ({ activeHeading }) => {
           <div className={`${styles.button}`}>
             <Link to="/create-shop">
               <h1 className="text-[#fff] flex items-center ">
-                Become Seller
-                <IoIosArrowForward className="ml-1" />
+                {isShopAuthenticated ? "Dashboard" : "Become Seller"}
+                <IoIosArrowForward className="ml-1"/>
               </h1>
             </Link>
           </div>
@@ -281,7 +284,7 @@ const Header = ({ activeHeading }) => {
 
                 {search && searchData.length ? (
                   <div className="absolute min-h-[130vh] bg-slate-50 shadow-sm-2 z-[9] p-4">
-                    {searchData.map((product, index) => { 
+                    {searchData.map((product, index) => {
                       return (
                         <Link to={`/product/${product.id}`}>
                           <div className="w-fullflex items-start py-3">

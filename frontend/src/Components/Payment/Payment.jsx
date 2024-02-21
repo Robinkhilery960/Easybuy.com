@@ -116,6 +116,24 @@ const Payment = () => {
             toast.error(error.response.data.message)
         }
     }
+    const cashOnDeliveryHandler = async (e) => {
+        e.preventDefault()
+        try {
+            order.paymentInfo = {
+                type: "Cash On Delivery"
+            }
+            axios.post(`${server}/order/create-order/`, order, { withCredentials: true }).then((res) => {
+                toast.success("Order created successfully")
+                setOpen(false)
+                localStorage.setItem("cartItems", JSON.stringify([]))
+                localStorage.setItem("lastOrder", JSON.stringify([]))
+                navigate("/order/success")
+                window.location.reload()
+            })
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
 
     useEffect(() => {
         const orderData = JSON.parse(localStorage.getItem("lastOrder"))
@@ -125,7 +143,7 @@ const Payment = () => {
         <div className='w-full flex flex-col items-center py-8'>
             <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
                 <div className="w-full 800px:w-[65%]">
-                    <PaymentInfo user={user} paymentHandler={paymentHandler} open={open} setOpen={setOpen} onApprove={onApprove} createOrder={createOrder} />
+                    <PaymentInfo user={user} paymentHandler={paymentHandler} open={open} setOpen={setOpen} onApprove={onApprove} createOrder={createOrder} cashOnDeliveryHandler={cashOnDeliveryHandler} />
                 </div>
                 <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
                     <CardData orderData={orderData} />
@@ -137,7 +155,7 @@ const Payment = () => {
 }
 
 
-const PaymentInfo = ({ user, paymentHandler, open, setOpen, onApprove, createOrder }) => {
+const PaymentInfo = ({ user, paymentHandler, open, setOpen, onApprove, createOrder, cashOnDeliveryHandler }) => {
     const [select, setSelect] = useState(1)
 
 
@@ -309,7 +327,7 @@ const PaymentInfo = ({ user, paymentHandler, open, setOpen, onApprove, createOrd
                 {/* cash on delivery */}
                 {select === 3 ? (
                     <div className="w-full flex">
-                        <form className="w-full" onSubmit={paymentHandler}>
+                        <form className="w-full" onSubmit={cashOnDeliveryHandler}>
                             <input
                                 type="submit"
                                 value="Confirm"
@@ -347,7 +365,7 @@ const CardData = ({ orderData }) => {
             </div>
             <div className="flex justify-between items-center">
                 <h3 className="text-[16px] font-[400] text-[#000000a4]">Total:</h3>
-                <h5 className='text-[18px] font-[600] text-end pt-3'>$ {orderData?.totalPrice}</h5>
+                <h5 className='text-[18px] font-[600] text-end pt-3'>$ {orderData?.totalPrice?.toFixed(2)}</h5>
             </div>
             <br />
 

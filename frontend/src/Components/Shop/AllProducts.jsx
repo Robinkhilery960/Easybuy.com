@@ -9,15 +9,15 @@ import { Link } from 'react-router-dom'
 
 const AllProducts = () => {
     const { shop } = useSelector(state => state.shop)
-    const { products,allProductLoading, deleteProductLoading} = useSelector(state => state.product)
+    const { shopProducts, allProductLoading, deleteProductLoading } = useSelector(state => state.product)
 
     const dispatch = useDispatch()
 
-    
-    const handleDelete = (id)=>{
+
+    const handleDelete = (id) => {
         dispatch(deleteProduct(id))
     }
-    
+
     const columns = [
         {
             field: "id",
@@ -81,9 +81,9 @@ const AllProducts = () => {
             sortable: false,
             renderCell: (params) => {
                 return (
-                    <> 
+                    <>
                         <Button>
-                            <AiOutlineDelete size={20}  onClick={()=>handleDelete(params.id)}/>
+                            <AiOutlineDelete size={20} onClick={() => handleDelete(params.id)} />
                         </Button>
                     </>
                 )
@@ -93,14 +93,14 @@ const AllProducts = () => {
     ]
 
 
-    const row=[]
-    products && products.forEach((product)=>{
+    const row = []
+    shopProducts && shopProducts.forEach((product) => {
         row.push({
-            id:product._id,
-            name:product.name,
-            price:"US$" + product.discountPrice,
-            stock:product.stock,
-            sold:10
+            id: product._id,
+            name: product.name,
+            price: "US$" + product.discountPrice,
+            stock: product.stock,
+            sold: product.sold_out
         })
     })
 
@@ -111,13 +111,13 @@ const AllProducts = () => {
 
     return (
         <>
-        {
-            allProductLoading ? (<Loader/>) :(
-                <div className="w-full mx-8 pt-1 mt-10 bg-white">
-                    <DataGrid rows={row} columns={columns} pageSize={10} disableSelectionOnClick autoHeight />
-                </div>
-            )
-        }
+            {
+                allProductLoading ? (<Loader />) : (
+                    <div className="w-full mx-8 pt-1 mt-10 bg-white">
+                        <DataGrid rows={row} columns={columns} pageSize={10} disableSelectionOnClick autoHeight />
+                    </div>
+                )
+            }
         </>
     )
 }

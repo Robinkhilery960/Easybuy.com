@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux' 
+import { useDispatch, useSelector } from 'react-redux'
 import { AiOutlineDelete, AiOutlineEye } from 'react-icons/ai'
 import { RxCross1 } from 'react-icons/rx'
 
@@ -17,7 +17,7 @@ import { toast } from 'react-toastify'
 
 const AllCoupons = () => {
     const { shop } = useSelector(state => state.shop)
-    const { products } = useSelector(state => state.product)
+    const { shopProducts } = useSelector(state => state.product)
     const [open, setOpen] = useState(false)
     const [name, setName] = useState("")
     const [value, setValue] = useState("")
@@ -25,7 +25,7 @@ const AllCoupons = () => {
     const [maxAmount, setMaxAmount] = useState("")
     const [selectProduct, setSelectProduct] = useState("")
     const [couponCodes, SetCouponCodes] = useState([])
-    const navigate= useNavigate()
+    const navigate = useNavigate()
 
 
 
@@ -119,7 +119,7 @@ const AllCoupons = () => {
         e.preventDefault()
 
         await axios.post(
-            `${server}/couponCode/create-couponCode`, { name, minAmount, value, maxAmount, shopId: shop._id, selectProduct, shop }, { withCredentials: true }).then((res) => { 
+            `${server}/couponCode/create-couponCode`, { name, minAmount, value, maxAmount, shopId: shop._id, selectProduct, shop }, { withCredentials: true }).then((res) => {
                 toast.success("Coupon code created successfully")
                 setOpen(false)
                 loadAllCouponCodes()
@@ -136,7 +136,7 @@ const AllCoupons = () => {
             `${server}/couponCode/get-all-couponCode/${shop._id}`, { withCredentials: true }).then((res) => {
                 const { couponCodes } = res.data
                 SetCouponCodes(couponCodes)
-                
+
                 console.log(res.data)
             }).catch((error) => {
                 console.log(error)
@@ -164,7 +164,7 @@ const AllCoupons = () => {
     return (
         <>
             {
-                couponCodes.length === 0 ? (<Loader />) : (
+                (
                     <div className="w-full mx-8 pt-1 mt-10 bg-white">
                         <div className="w-full flex justify-end " onClick={() => setOpen(true)}>
                             <div className={`${styles.button} text-white !w-max !h-[45px] px-3 !rounded-[5px] mr-3 `}>Create Coupon Code</div>
@@ -215,7 +215,7 @@ const AllCoupons = () => {
                                                 <select className='w-full mt-2 border h-[35px] rounded-[5px] ' value={selectProduct} onChange={(e) => setSelectProduct(e.target.value)}>
                                                     <option value="choose a category">Choose a Product</option>
                                                     {
-                                                        products && products.map((product) => (
+                                                        shopProducts && shopProducts.map((product) => (
                                                             <option value={product.name} key={product._id}>{product.name}</option>
                                                         ))
                                                     }

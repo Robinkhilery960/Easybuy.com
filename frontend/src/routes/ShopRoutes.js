@@ -6,6 +6,8 @@ import ShopCreateEvents from "../Components/Shop/ShopCreateEvents.jsx";
 import AllEventsPage from "../Components/Shop/AllEventsPage.jsx";
 import ShopAllCoupons from "../Components/Shop/ShopAllCoupons.jsx";
 import ShopPreviewPage from "../Components/Shop/ShopPreviewPage.jsx";
+import AllOrdersPage from "../Components/Shop/AllOrdersPage.jsx";
+import OrderDetailPage from "../Components/Shop/OrderDetailPage.jsx";
 
 export {
   ShopHomePage,
@@ -15,5 +17,8 @@ export {
   ShopCreateEvents,
   AllEventsPage,
   ShopAllCoupons,
-  ShopPreviewPage
+  ShopPreviewPage,
+  AllOrdersPage,
+  OrderDetailPage
+
 };
