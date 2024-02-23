@@ -5,7 +5,8 @@ const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Shop = require("../modal/shop");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Product = require("../modal/product");
-const { isShopAuthenticated } = require("../middlewares/auth");
+const Order = require("../modal/order");
+const { isShopAuthenticated, isAuthenticated } = require("../middlewares/auth");
 const fs = require("fs");
 
 // create product
@@ -104,6 +105,72 @@ router.get(
       res.status(200).json({
         success: true,
         allProducts,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+
+// create review
+router.put(
+  "/create-review",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { user, rating, comment, productId, orderId } = req.body;
+      // find the product
+      let product = await Product.findById(productId);
+      if (!product) {
+        return next(new ErrorHandler("Product not found with this Id", 500));
+      }
+      if (product.reviews) {
+        let review = product.reviews.find(
+          (review) => review.user._id === user._id
+        );
+        // gave review by this user
+        if (review) {
+          review.rating = rating;
+          review.comment = comment;
+          review.productId = productId;
+        } else {
+          // review is not given by this user
+          product.reviews.push({
+            user,
+            rating,
+            comment,
+            productId,
+          });
+        }
+      } else {
+        product.reviews = [
+          {
+            user,
+            rating,
+            comment,
+            productId,
+          },
+        ];
+      }
+      // add ratings
+      let ratings =
+        product.reviews.reduce((acc, curr) => acc + curr.rating, 0) /
+        product.reviews.length;
+      product.ratings = ratings;
+      await product.save({ validateBeforeSave: false });
+      // upadte the order
+      await Order.findByIdAndUpdate(
+        orderId,
+        {
+          $set: { "cart.$[elem].isReviewed": true },
+        },
+        {
+          arrayFilters: [{ "elem._id": productId }],
+        }
+      );
+      res.status(200).json({
+        success: true,
+        message: "Reviwed successfully",
       });
     } catch (error) {
       return next(new ErrorHandler(error, 500));
