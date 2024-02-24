@@ -8,7 +8,7 @@ import {
     AiOutlineEye,
     AiOutlineEyeInvisible,
 } from "react-icons/ai";
-import { MdOutlineTrackChanges } from "react-icons/md";
+import { MdOutlineTrackChanges, MdTrackChanges } from "react-icons/md";
 import { Country, State, City } from "country-state-city";
 import styles from "../../Styles/style";
 import { Link } from "react-router-dom";
@@ -276,24 +276,20 @@ const AllOrders = ({ user }) => {
 };
 
 const AllRefundOrders = () => {
-    const orders = [
-        {
-            _id: "876rtdvg2ifg2iubd283",
-            orderItems: [
-                {
-                    name: "Iphone 14 pro max",
-                },
-            ],
-            totalPrice: 120,
-            orderStatus: "Processing",
-        },
-    ];
+    const { userOrders } = useSelector((state) => state.order);
+    const { user } = useSelector((state) => state.user);
+    const dispatch = useDispatch()
 
     const columns = [
-        { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+        {
+            field: "id",
+            headerName: "Order ID",
+            minWidth: 150,
+            flex: 0.7,
+        },
         {
             field: "status",
-            headerName: "status",
+            headerName: "Status",
             minWidth: 130,
             flex: 0.7,
             cellClassName: (params) => {
@@ -325,7 +321,7 @@ const AllRefundOrders = () => {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={`/order/${params.id}`}>
+                        <Link to={`/user/order/${params.id}`}>
                             <Button>
                                 <AiOutlineArrowRight size={20} />
                             </Button>
@@ -338,15 +334,22 @@ const AllRefundOrders = () => {
 
     const row = [];
 
-    orders &&
-        orders.forEach((item) => {
-            row.push({
-                id: item._id,
-                itemsQty: item.orderItems.length,
-                total: "US$" + item.totalPrice,
-                status: item.orderStatus,
-            });
+    userOrders &&
+        userOrders.forEach((item) => {
+            if (item.status === "Processing refund") {
+                row.push({
+                    id: item._id,
+                    itemsQty: item.cart?.length,
+                    total: "US$" + item.totalPrice,
+                    status: item?.status,
+                });
+            }
+
         });
+
+    useEffect(() => {
+        dispatch(loadUserOrders(user._id))
+    }, [])
     return (
         <div className="pl-8 pt-1">
             <DataGrid
@@ -361,24 +364,20 @@ const AllRefundOrders = () => {
 };
 
 const TrackOrder = () => {
-    const orders = [
-        {
-            _id: "876rtdvg2ifg2iubd283",
-            orderItems: [
-                {
-                    name: "Iphone 14 pro max",
-                },
-            ],
-            totalPrice: 120,
-            orderStatus: "Processing",
-        },
-    ];
+    const { userOrders } = useSelector((state) => state.order);
+    const { user } = useSelector((state) => state.user);
+    const dispatch = useDispatch()
 
     const columns = [
-        { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
+        {
+            field: "id",
+            headerName: "Order ID",
+            minWidth: 150,
+            flex: 0.7,
+        },
         {
             field: "status",
-            headerName: "status",
+            headerName: "Status",
             minWidth: 130,
             flex: 0.7,
             cellClassName: (params) => {
@@ -410,9 +409,9 @@ const TrackOrder = () => {
             renderCell: (params) => {
                 return (
                     <>
-                        <Link to={`/order/${params.id}`}>
+                        <Link to={`/user/track/order/${params.id}`}>
                             <Button>
-                                <MdOutlineTrackChanges size={20} />
+                                <MdTrackChanges size={20} />
                             </Button>
                         </Link>
                     </>
@@ -423,15 +422,19 @@ const TrackOrder = () => {
 
     const row = [];
 
-    orders &&
-        orders.forEach((item) => {
+    userOrders &&
+        userOrders.forEach((item) => {
             row.push({
                 id: item._id,
-                itemsQty: item.orderItems.length,
+                itemsQty: item.cart?.length,
                 total: "US$" + item.totalPrice,
-                status: item.orderStatus,
+                status: item?.status,
             });
         });
+
+    useEffect(() => {
+        dispatch(loadUserOrders(user._id))
+    }, [])
     return (
         <div className="pl-8 pt-1">
             <DataGrid

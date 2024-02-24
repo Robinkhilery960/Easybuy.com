@@ -1,15 +1,15 @@
 import React from 'react'
 import Footer from '../Components/layout/Footer.jsx'
 import Header from '../Components/layout/Header.js'
-import UserOrderDetail from './UserOrderDetail.jsx'
-const UserOrderDetailPage = () => {
+import UserOrderTrack from "../Pages/UserOrderTrack.jsx"
+const UserOrderTrackPage = () => {
     return (
         <div>
             <Header />
-            <UserOrderDetail />
+            <UserOrderTrack />
             <Footer />
         </div>
     )
 }
 
-export default UserOrderDetailPage
+export default UserOrderTrackPage

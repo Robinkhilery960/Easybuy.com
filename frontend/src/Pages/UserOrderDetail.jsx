@@ -36,6 +36,19 @@ const UserOrderDetail = () => {
             toast.error(error.response.data.message)
         }
     }
+    const handleRefund = async () => {
+        try {
+            axios.put(`${server}/order/request-refund/${orderId}`, {status:"Processing refund"}, { withCredentials: true }).then((res) => {
+                toast.success("Refund  requested successfully")
+                dispatch(loadUserOrders(user._id))
+                setOpen(false)
+                setComment("")
+                setRating(1)
+            })
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
 
     useEffect(() => {
         dispatch(loadUserOrders(user._id))
@@ -74,7 +87,7 @@ const UserOrderDetail = () => {
                         {
                             data?.status === "Delivered" && !item?.isReviewed ? (
                                 <div className={`${styles.button} !bg-[#000] !rounded-[4px] text-[#fff] font-[600] !h-[45px] text-[18px]`} onClick={() => [setOpen(true), setSelectedItem(item)]}>
-                                    Add a review 
+                                    Add a review
                                 </div>
                             ) : null
                         }
@@ -161,6 +174,14 @@ const UserOrderDetail = () => {
                     <h4 >
                         Payment Status:{" "}
                         {data?.paymentInfo?.status ? data?.paymentInfo?.status : "Not Paid"}</h4>
+                    {
+                        data?.paymentInfo?.status === "Succeeded" ? (
+                            <div className={`${styles.button} text-white`} onClick={handleRefund}>
+                                Ask for Refund
+                            </div>
+                        ) : null
+                    }
+
                 </div>
 
             </div>

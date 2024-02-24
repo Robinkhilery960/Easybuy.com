@@ -9,13 +9,14 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addTocart } from '../../../redux/slice/cart.js'
 import { toast } from 'react-toastify'
 import { addToWishlist, removeFromWishlist } from '../../../redux/slice/wishlist.js'
+import Ratings from '../../Products/Ratings.jsx'
 
-const ProductCard = ({ data }) => {
+const ProductCard = ({ data }) => { 
     const { cart } = useSelector(state => state.cart)
     const { wishlist } = useSelector(state => state.wishlist)
 
     const [click, setClick] = useState(false)
-    const [open, setOpen] = useState(false) 
+    const [open, setOpen] = useState(false)
     const dispatch = useDispatch();
 
     const handleAddToCart = (id) => {
@@ -34,7 +35,7 @@ const ProductCard = ({ data }) => {
     }
     const handleAddToWishlist = (id) => {
         if (cart && cart.find(item => item._id === data._id)) {
-           return  toast.error("Item is already in added to cart")
+            return toast.error("Item is already in added to cart")
         }
 
         setClick(!click)
@@ -52,7 +53,7 @@ const ProductCard = ({ data }) => {
     useEffect(() => {
         if (wishlist && wishlist.find(item => item._id === data._id)) {
             setClick(true)
-        }else{
+        } else {
             setClick(false)
         }
     }, [wishlist])
@@ -75,11 +76,7 @@ const ProductCard = ({ data }) => {
                         {data.name.length > 20 ? data.name.slice(0, 20) + "..." : data.name}
                     </h4>
                         <div className="flex">
-                            <AiFillStar className="mr-2 cursor-pointer" color="#F6BA00" size={20} />
-                            <AiFillStar className="mr-2 cursor-pointer" color="#F6BA00" size={20} />
-                            <AiFillStar className="mr-2 cursor-pointer" color="#F6BA00" size={20} />
-                            <AiFillStar className="mr-2 cursor-pointer" color="#F6BA00" size={20} />
-                            <AiOutlineStar className="mr-2 cursor-pointer" color="#F6BA00" size={20} />
+                            <Ratings rating={data?.ratings} />
                         </div>
                         <div className="py-2 flex items-center justify-between">
                             <div className="flex">

@@ -90,7 +90,8 @@ router.get(
 
 // update order status of order
 router.post(
-  "/update-order-status/:orderId", isShopAuthenticated,
+  "/update-order-status/:orderId",
+  isShopAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     try {
       const { status } = req.body;
@@ -119,6 +120,73 @@ router.post(
       }
 
       order.status = status;
+      await order.save({ validateBeforeSave: false });
+
+      res.status(200).json({
+        sucess: true,
+        order,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+
+// refund request- user
+router.put(
+  "/request-refund/:orderId",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { status } = req.body;
+      //find order
+      const order = await Order.findById(req.params.orderId);
+      if (!order) {
+        return next(new ErrorHandler("Order not found", 500));
+      }
+
+      order.status = status;
+      order.paymentInfo.status = status;
+      await order.save({ validateBeforeSave: false });
+
+      res.status(200).json({
+        sucess: true,
+        order,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+
+// refund success- seller
+router.put(
+  "/order-refund-success/:orderId",
+  isShopAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { status } = req.body;
+      //find order
+      const order = await Order.findById(req.params.orderId);
+      if (!order) {
+        return next(new ErrorHandler("Order not found", 500));
+      }
+
+      order.status = status;
+      order.paymentInfo.status = status;
+
+      const updateProduct = async (itemId, itemQty) => {
+        const product = await Product.findById(itemId);
+        product.stock = product.stock + itemQty;
+        product.sold_out = product.sold_out - itemQty;
+        await product.save({ validateBeforeSave: false });
+      };
+
+      if (status === "Refund successful") {
+        order.cart.forEach(async (item) => {
+          await updateProduct(item._id, item.qty);
+        });
+      }
       await order.save({ validateBeforeSave: false });
 
       res.status(200).json({

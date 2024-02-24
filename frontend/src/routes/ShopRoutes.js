@@ -8,6 +8,7 @@ import ShopAllCoupons from "../Components/Shop/ShopAllCoupons.jsx";
 import ShopPreviewPage from "../Components/Shop/ShopPreviewPage.jsx";
 import AllOrdersPage from "../Components/Shop/AllOrdersPage.jsx";
 import OrderDetailPage from "../Components/Shop/OrderDetailPage.jsx";
+import AllOrderRefundPage from "../Components/Shop/AllOrderRefundPage.jsx";
 
 export {
   ShopHomePage,
@@ -19,6 +20,7 @@ export {
   ShopAllCoupons,
   ShopPreviewPage,
   AllOrdersPage,
-  OrderDetailPage
+  OrderDetailPage,
+  AllOrderRefundPage
 
 };

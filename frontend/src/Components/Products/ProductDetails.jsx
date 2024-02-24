@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { addTocart } from "../../redux/slice/cart"
 import { toast } from "react-toastify"
 import { addToWishlist, removeFromWishlist } from "../../redux/slice/wishlist"
+import Ratings from "./Ratings"
 
 const ProductDetails = ({ data }) => {
     const { cart } = useSelector(state => state.cart)
     const { wishlist } = useSelector(state => state.wishlist)
+    const { shopProducts } = useSelector(state => state.product)
 
     const [select, setSelect] = useState(0)
     const [count, setCount] = useState(1)
@@ -19,12 +21,30 @@ const ProductDetails = ({ data }) => {
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
+    let productWithReview = 0
+    const totalShopRatings = shopProducts && shopProducts.reduce((acc, product) => {
+        if (product.ratings) {
+            productWithReview++
+            return acc + product.ratings
+        } else {
+            return acc + 0
+        }
+    }, 0)
+
+    let totalReviews = shopProducts?.reduce((acc, product) => (acc + product.reviews.length), 0)
+
+    const avgRating = totalShopRatings / productWithReview
+
+    useEffect(() => {
+        dispatch(loadShopProducts(data?.shop._id))
+    }, [])
+
     const handleMessageSumbit = () => {
         navigate("/conversation=123456342343")
     }
     console.log(data)
 
-    const handleAddToCart = (id) => { 
+    const handleAddToCart = (id) => {
         const isItemExists = cart && cart.find((i) =>
             i._id === id
         )
@@ -32,14 +52,14 @@ const ProductDetails = ({ data }) => {
         if (isItemExists) {
             toast.error("Item already in cart !")
         } else {
-            if(data.stock<count){
-                toast.error("Product stock is limited!") 
-            }else{ 
+            if (data.stock < count) {
+                toast.error("Product stock is limited!")
+            } else {
                 const cartData = { ...data, qty: count }
                 dispatch(addTocart(cartData))
                 toast.success("Item added to cart successfully ")
             }
-           
+
         }
     }
 
@@ -59,12 +79,12 @@ const ProductDetails = ({ data }) => {
     useEffect(() => {
         if (wishlist && wishlist.find(item => item._id === data._id)) {
             setClick(true)
-        }else{
+        } else {
             setClick(false)
         }
     }, [wishlist])
 
-    
+
     return (
         <div>
             {
@@ -108,7 +128,7 @@ const ProductDetails = ({ data }) => {
                                                 -
                                             </button>
                                             <span className='bg-gray-200 text-gray-600 font-medium px-4 py-[9px]'>
-                                                {data.qty?data.qty:count}
+                                                {data.qty ? data.qty : count}
                                             </span>
                                             <button className='bg-gradient-to-r  from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out'
                                                 onClick={() => setCount(count + 1)}>
@@ -117,7 +137,7 @@ const ProductDetails = ({ data }) => {
                                         </div>
                                         {
                                             click ? <AiFillHeart size={30} className='cursor-pointer '
-                                                onClick={() =>handleRemoveFromWishlist(data._id)}
+                                                onClick={() => handleRemoveFromWishlist(data._id)}
                                                 color={click ? "red" : "#333"}
                                                 title='Remove from wishlist' /> :
                                                 <AiOutlineHeart size={30} className='cursor-pointer  '
@@ -138,11 +158,11 @@ const ProductDetails = ({ data }) => {
                                         </Link>
 
                                         <div className="pr-8">
-                                        <Link to={`/shop/preview/${data.shop._id}`}>
-                                            <h3 className={`${styles.shop_name} pb-1 pt-1`}>{data.shop.name}</h3>
-                                        </Link>
+                                            <Link to={`/shop/preview/${data.shop._id}`}>
+                                                <h3 className={`${styles.shop_name} pb-1 pt-1`}>{data.shop.name}</h3>
+                                            </Link>
 
-                                            <h5 className="pb-3 text-[15px]">({data.shop.ratings}) Rating</h5>
+                                            <h5 className="pb-3 text-[15px]">({avgRating ? avgRating.toFixed(1):"0"}/5) Rating</h5>
                                         </div>
                                         <div className={`${styles.button} bg-[#6443d1] mt-4 !rounded-[4px] h-11`} onClick={handleMessageSumbit}>
                                             <span className='text-[#fff] flex items-center'>Send Message
@@ -155,7 +175,7 @@ const ProductDetails = ({ data }) => {
 
                             </div>
                         </div>
-                        <ProductDetailInfo data={data} />
+                        <ProductDetailInfo data={data} shopProducts={shopProducts} avgRating={avgRating} totalReviews={totalReviews} />
                         <br />
                         <br />
                     </div>
@@ -165,14 +185,13 @@ const ProductDetails = ({ data }) => {
     )
 }
 
-const ProductDetailInfo = ({ data }) => {
-    const { shopProducts } = useSelector(state => state.product)
+const ProductDetailInfo = ({ data, shopProducts, avgRating, totalReviews }) => {
     const [active, setActive] = useState(1)
     const dispatch = useDispatch()
 
-    useEffect(() => {
-        dispatch(loadShopProducts(data?.shop._id))
-    }, [])
+
+
+
     return (
         <div className="bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded  ">
             <div className="w-full flex justify-between border-b pt-10 pb-2">
@@ -211,8 +230,18 @@ const ProductDetailInfo = ({ data }) => {
             }
             {
                 active === 2 ? (
-                    <div className="w-full justify-center min-h-[40vh] flex items-center">
-                        <p>No Reviews yet!</p>
+                    <div className="w-full  min-h-[40vh] flex my-4 flex-col overflow-y-scroll" >
+                        {data && data?.reviews.length !== 0 ? (data.reviews.map((review) => (
+                            <div className="flex" key={review._id}>
+                                <img src={`${backend_url}${review?.user?.avatar}`} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
+                                <div className="">
+                                    <h4 className="text-[15px] font-semibold ">{review?.user?.name}
+                                        <Ratings rating={review.rating} />
+                                    </h4>
+                                    <p className="">{review?.comment}</p>
+                                </div>
+                            </div>
+                        ))) : <p className="text-center">No Reviews yet!</p>}
                     </div>
                 ) : null
             }
@@ -229,7 +258,7 @@ const ProductDetailInfo = ({ data }) => {
                                         <h3 className={`${styles.shop_name}`}>{data?.shop?.name}</h3>
 
                                     </Link>
-                                    <h5 className="pb-2 text-[15px]">(4/5) Rating</h5>
+                                    <h5 className="pb-2 text-[15px]">({avgRating ? avgRating.toFixed(1) : "0"}/5)  Rating</h5>
                                 </div>
 
 
@@ -253,7 +282,7 @@ const ProductDetailInfo = ({ data }) => {
                                 </h5>
                                 <h5 className="font-[600] pt-3">
                                     Total Reviews: <span className="font-[500]">
-                                        234
+                                        {totalReviews}
                                     </span>
                                 </h5>
                                 <Link to={`/shop/preview/${data.shop._id}`}>
