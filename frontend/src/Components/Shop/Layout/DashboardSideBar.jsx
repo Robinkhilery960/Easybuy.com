@@ -84,7 +84,7 @@ const DashboardSideBar = ({ active}) => {
             </div>
 
             <div className="w-full flex items-center p-4]"  >
-                <Link to="/dashboard-refunds" className="w-full flex items-center m-3">
+                <Link to="/shop/setting" className="w-full flex items-center m-3">
                     <CiSettings size={30} color={`${active === 11 ? "crimson" : "#555"}`} />
                     <h5 className={`hidden 800px:block pl-2 text-[18px] font-[400] ${active === 11 ? "text-[crimson]" : "text-[#555]"}`}> Settings</h5>
                 </Link>

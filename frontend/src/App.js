@@ -12,7 +12,8 @@ import {
   ShopPreviewPage,
   AllOrdersPage,
   OrderDetailPage,
-  AllOrderRefundPage
+  AllOrderRefundPage,
+  ShopSettingPages
 } from "./routes/ShopRoutes.js";
 import {
   LoginPage,
@@ -140,6 +141,14 @@ const App = () => {
             element={
               <ProtectedShopRoute>
                 <ShopHomePage />
+              </ProtectedShopRoute>
+            }
+          />
+          <Route
+            path="/shop/setting"
+            element={
+              <ProtectedShopRoute>
+                <ShopSettingPages />
               </ProtectedShopRoute>
             }
           />

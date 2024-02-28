@@ -3,16 +3,33 @@ import { useSelector } from 'react-redux'
 import { backend_url, server } from '../../server'
 import styles from '../../Styles/style'
 import axios from 'axios'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import Loader from '../layout/Loader'
 
 const ShopInfo = ({ isOwner }) => {
+    const { shopProducts } = useSelector(state => state.product)
     const { shopId } = useParams()
     const [shop, setShop] = useState({})
     const [loading, setLoading] = useState(false)
 
     const navigate = useNavigate()
+
+    let productWithReview = 0
+    const totalShopRatings = shopProducts && shopProducts.reduce((acc, product) => {
+        if (product.ratings) {
+            productWithReview++
+            return acc + product.ratings
+        } else {
+            return acc + 0
+        }
+    }, 0)
+
+
+    let totalReviews = shopProducts?.reduce((acc, product) => (acc + product.reviews.length), 0)
+
+    const avgRating = totalShopRatings / productWithReview
+
 
     const logoutHandler = () => {
         axios.get(`${server}/shop/logout`, { withCredentials: true }).then((res) => {
@@ -26,8 +43,8 @@ const ShopInfo = ({ isOwner }) => {
     const getShopInfo = async () => {
         try {
             setLoading(true)
-            const  {data} = await axios.get(`${server}/shop/get-shop-info/${shopId}`)
-             
+            const { data } = await axios.get(`${server}/shop/get-shop-info/${shopId}`)
+
             setLoading(false)
             setShop(data.shop)
         } catch (error) {
@@ -37,7 +54,7 @@ const ShopInfo = ({ isOwner }) => {
 
     }
 
-    useEffect(() => { 
+    useEffect(() => {
         getShopInfo()
     }, [])
     return (
@@ -66,11 +83,11 @@ const ShopInfo = ({ isOwner }) => {
                     </div>
                     <div className="p-3">
                         <h5 className="font-[600]"> Total Products</h5>
-                        <h4 className="text-[#000000a6]">10</h4>
+                        <h4 className="text-[#000000a6]">{shopProducts && shopProducts.length}</h4>
                     </div>
                     <div className="p-3">
                         <h5 className="font-[600]"> Shop  Ratings</h5>
-                        <h4 className="text-[#000000a6]">4/5</h4>
+                        <h4 className="text-[#000000a6]">({avgRating ? avgRating.toFixed(1) : "0"}/5)  Rating</h4>
                     </div>
                     <div className="p-3">
                         <h5 className="font-[600]"> Joined on</h5>
@@ -79,9 +96,11 @@ const ShopInfo = ({ isOwner }) => {
                     {
                         isOwner && (
                             <div className="py-3 px-4">
-                                <div className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}>
-                                    <span className='text-white'>Edit shop</span>
-                                </div>
+                                <Link to="/shop/setting">
+                                    <div className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}>
+                                        <span className='text-white'>Edit shop</span>
+                                    </div>
+                                </Link>
                                 <div className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`} onClick={logoutHandler}>
                                     <span className='text-white'>Log Out</span>
                                 </div>

@@ -186,6 +186,7 @@ router.get(
   })
 );
 
+// update user 
 router.put(
   "/updateuser",
   isAuthenticated,

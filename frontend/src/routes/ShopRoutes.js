@@ -9,6 +9,7 @@ import ShopPreviewPage from "../Components/Shop/ShopPreviewPage.jsx";
 import AllOrdersPage from "../Components/Shop/AllOrdersPage.jsx";
 import OrderDetailPage from "../Components/Shop/OrderDetailPage.jsx";
 import AllOrderRefundPage from "../Components/Shop/AllOrderRefundPage.jsx";
+import ShopSettingPages from "../Components/Shop/ShopSettingPages.jsx";
 
 export {
   ShopHomePage,
@@ -21,6 +22,7 @@ export {
   ShopPreviewPage,
   AllOrdersPage,
   OrderDetailPage,
-  AllOrderRefundPage
+  AllOrderRefundPage,
+  ShopSettingPages
 
 };

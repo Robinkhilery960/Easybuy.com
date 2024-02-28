@@ -237,4 +237,61 @@ function createActivationToken(shop) {
     expiresIn: "5m",
   });
 }
+
+// update shop avatar 
+
+router.put(
+  "/updateshop",
+  isShopAuthenticated,
+  upload.single("image"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { name, description, address, phoneNumber } = req.body;
+      // does user exist already
+      let shop = req.shop;
+      if (!shop) {
+        return next(new ErrorHandler("Shop not found", 400));
+      }
+ 
+      shop.name = name;
+      shop.description = description;
+      shop.address = address;
+      shop.phoneNumber = phoneNumber;
+      // remove the upload image in upload directory
+      if (!shop) {
+        const filename = shop.avatar;
+        const filePath = `uploads/${filename}`;
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.log(err.message);
+          } else {
+            console.log("Deletion of file is done");
+          }
+        });
+      }
+      const filename = req.file.filename;
+      const fileUrl = path.join(filename);
+      console.log(fileUrl);
+
+      // make a new user
+      shop.avatar = fileUrl;
+
+      await shop.save();
+
+      res.status(201).json({
+        success: true,
+        message: "Shop updated successful!",
+        shop,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+
+
+
+
+
 module.exports = router;

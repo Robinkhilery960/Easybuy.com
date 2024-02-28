@@ -11,7 +11,7 @@ import { toast } from 'react-toastify'
 import { addToWishlist, removeFromWishlist } from '../../../redux/slice/wishlist.js'
 import Ratings from '../../Products/Ratings.jsx'
 
-const ProductCard = ({ data }) => { 
+const ProductCard = ({ data, isEvent }) => {
     const { cart } = useSelector(state => state.cart)
     const { wishlist } = useSelector(state => state.wishlist)
 
@@ -64,7 +64,7 @@ const ProductCard = ({ data }) => {
                     <div className='flex justify-end '>
 
                     </div>
-                    <Link to={`/product/${data._id}`}>
+                    <Link to={isEvent ? `/product/${data._id}?isEvent="true` : `/product/${data._id}`}>
                         <img src={`${backend_url}${data?.images[0]}`} alt="" className='w-full h-[170px] object-contain' />
                     </Link>
                     <Link to={`/shop/preview/${data?.shop._id}`}>
@@ -72,9 +72,10 @@ const ProductCard = ({ data }) => {
                             {data.shop.name}
                         </h5>
                     </Link>
-                    <Link to={`/product/${data._id}`}><h4 className='pb-3 font-[500]'>
-                        {data.name.length > 20 ? data.name.slice(0, 20) + "..." : data.name}
-                    </h4>
+                    <Link to={isEvent ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}>
+                        <h4 className='pb-3 font-[500]'>
+                            {data.name.length > 20 ? data.name.slice(0, 20) + "..." : data.name}
+                        </h4>
                         <div className="flex">
                             <Ratings rating={data?.ratings} />
                         </div>
