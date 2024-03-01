@@ -1,5 +1,6 @@
 import SignupPage from "../Pages/SignupPage";
-// import LoginPage from "../Pages/LoginPage";
+ 
+import LoginPage from "../Pages/LoginPage.jsx";
 import ActivationPage from "../Pages/ActivationPage";
 import HomePage from "../Pages/HomePage";
 import ProductPage from "../Pages/ProductPage";
@@ -18,7 +19,7 @@ import UserOrderDetailPage from "../Pages/UserOrderDetailPage";
 import UserOrderTrackPage from "../Pages/UserOrderTrackPage";
 
 export {
-  // LoginPage,
+ LoginPage,
   SignupPage,
   ActivationPage,
   HomePage,
