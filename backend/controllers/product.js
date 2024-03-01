@@ -6,7 +6,7 @@ const Shop = require("../modal/shop");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Product = require("../modal/product");
 const Order = require("../modal/order");
-const { isShopAuthenticated, isAuthenticated } = require("../middlewares/auth");
+const { isShopAuthenticated, isAuthenticated, isAdmin } = require("../middlewares/auth");
 const fs = require("fs");
 
 // create product
@@ -39,7 +39,7 @@ router.post(
   })
 );
 
-// delete product
+// delete product---user
 router.delete(
   "/delete-product/:id",
   isShopAuthenticated,
@@ -177,4 +177,42 @@ router.put(
     }
   })
 );
+
+// delete product---Admin
+router.delete(
+  "/delete-product/:id",
+  isShopAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    // get the product id from  params
+    const { id } = req.params;
+    // find  and delete this product
+    try {
+      const deletedProduct = await Product.findByIdAndDelete(id);
+      console.log("deletedProduct", deletedProduct);
+      if (!deletedProduct) {
+        return next(new ErrorHandler("Product not found to delete", 500));
+      }
+
+      deletedProduct.images.forEach((image) => {
+        const filePath = `uploads/${image}`;
+        console.log(filePath);
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.log(err.message);
+          } else {
+            console.log("Deletion of file is done");
+          }
+        });
+      });
+
+      res.status(200).json({
+        message: "Product deleted successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+ 
 module.exports = router;
