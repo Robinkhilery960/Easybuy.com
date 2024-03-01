@@ -17,7 +17,7 @@ import {
 } from "./routes/ShopRoutes.js";
 import { AdminDashboardPage, AdminAllOrdersPage,AdminAllProductsPage, AdminAllShopsPage,AdminAllEventsPage, AdminAllUsersPage, AdminWidthdrawMoneyPage } from "./routes/AdminRoutes.js";
 import {
-  LoginPage,
+  // LoginPage,
   SignupPage,
   ActivationPage,
   HomePage,
@@ -85,7 +85,7 @@ const App = () => {
         )}
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
+          {/* <Route path="/login" element={<LoginPage />} /> */}
           <Route path="/sign-up" element={<SignupPage />} />
           <Route path="/products" element={<ProductPage />} />
           <Route
