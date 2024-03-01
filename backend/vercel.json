@@ -1,6 +1,7 @@
 {
     "version": 2,
     "name":"multi-vendor-ecommerce-fullstack",
+    "installCommand": "npm ci --force",
     "builds":[
         {"src":"server.js","use":"@vercel/node"}
     ],
