@@ -9,7 +9,7 @@ const sendMail = require("../utils/sendMail");
 const ErrorHandler = require("../utils/ErrorHandler");
 const sendToken = require("../utils/jwtToken.js");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
-const { isAuthenticated } = require("../middlewares/auth.js");
+const { isAuthenticated, isAdmin } = require("../middlewares/auth.js");
 
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   // data extraction from  request
@@ -186,7 +186,7 @@ router.get(
   })
 );
 
-// update user 
+// update user
 router.put(
   "/updateuser",
   isAuthenticated,
@@ -338,6 +338,59 @@ function createActivationToken(user) {
     expiresIn: "5m",
   });
 }
+
+// get all users--- admin
+router.get(
+  "/getAllUsers",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const allUsers = await User.find().sort({ createdAt: -1 });
+      res.status(200).json({
+        success: true,
+        allUsers,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+
+// delete user-- 
+router.delete(
+  "/delete-user/:id",
+  isAuthenticated,
+  isAdmin("Admin"), 
+  catchAsyncErrors(async (req, res, next) => {
+    // get the user id from  params
+    const { id } = req.params;
+    console.log(id);
+    // find  and delete this user
+    try {
+      const deletedUser = await User.findByIdAndDelete(id, { new: true });
+      console.log("deletedUser", deletedUser);
+      if (!deletedUser) {
+        return next(new ErrorHandler("User not found to delete", 500));
+      }
+
+      const filePath = `uploads/${deletedUser.avatar}`;
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.log(err.message);
+        } else {
+          console.log("Deletion of file is done");
+        }
+      });
+
+      res.status(200).json({
+        message: "User deleted successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
 
 // send mail to user activate user
 module.exports = router;

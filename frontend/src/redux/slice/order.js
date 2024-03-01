@@ -40,20 +40,15 @@ export const loadUserOrders = createAsyncThunk(
   }
 );
 // get all shop's products
-// export const loadAllProducts = createAsyncThunk(
-//   "loadAllProducts",
-//   async (shopId) => {
-//     try {
-//       const response = await axios.get(
-//         `${server}/product/get-all-shops-products`
-//       );
-//       return response.data;
-//     } catch (error) {
-//       console.log(error);
-//       return error;
-//     }
-//   }
-// )
+export const loadAllOrders = createAsyncThunk("loadAllOrders", async () => {
+  try {
+    const response = await axios.get(`${server}/order/get-all-shops-orders`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+});
 
 const orderSlice = createSlice({
   name: "order",
@@ -88,18 +83,18 @@ const orderSlice = createSlice({
     });
 
     //for all shops  all product
-    // builder.addCase(loadAllProducts.fulfilled, (state, action) => {
-    //   state.allProductsLoading = false;
-    //   state.allProducts = action.payload.allProducts;
-    //   state.allProductsSuccess = true;
-    // });
-    // builder.addCase(loadAllProducts.pending, (state, action) => {
-    //   state.allProductsLoading = true;
-    // });
-    // builder.addCase(loadAllProducts.rejected, (state, action) => {
-    //   state.allProductsLoading = false;
-    //   state.allProductError = action.payload;
-    // });
+    builder.addCase(loadAllOrders.fulfilled, (state, action) => {
+      state.allOrdersLoading = false;
+      state.allOrders = action.payload.allOrders;
+      state.allOrdersSuccess = true;
+    });
+    builder.addCase(loadAllOrders.pending, (state, action) => {
+      state.allOrdersLoading = true;
+    });
+    builder.addCase(loadAllOrders.rejected, (state, action) => {
+      state.allOrdersLoading = false;
+      state.allOrdersError = action.payload;
+    });
   },
 });
 

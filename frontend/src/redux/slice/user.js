@@ -73,6 +73,18 @@ export const deleteUserAddress = createAsyncThunk(
   }
 );
 
+// get all users
+export const loadAllUsers = createAsyncThunk("loadAllUsers", async () => {
+  try {
+    const response = await axios.get(`${server}/user/getAllUsers`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(error.response.data.message);
+  }
+});
+
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -134,6 +146,20 @@ const userSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(deleteUserAddress.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = action.error.message;
+    });
+
+    // get all users
+    builder.addCase(loadAllUsers.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.allUsers = action.payload.allUsers;
+      state.isError = false;
+    });
+    builder.addCase(loadAllUsers.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(loadAllUsers.rejected, (state, action) => {
       state.isLoading = false;
       state.isError = action.error.message;
     });
