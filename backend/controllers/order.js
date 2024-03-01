@@ -199,4 +199,20 @@ router.put(
   })
 );
 
+// get all shops orders
+router.get(
+  "/get-all-shops-orders",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const allOrders = await Order.find().sort({ createdAt: -1 });
+      res.status(200).json({
+        success: true,
+        allOrders,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
+
 module.exports = router;
