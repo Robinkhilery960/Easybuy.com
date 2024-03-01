@@ -3,10 +3,10 @@ const router = express.Router();
 const { upload } = require("../multer");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const Shop = require("../modal/shop");
-const ErrorHandler = require("../utils/ErrorHandler"); 
-const { isShopAuthenticated } = require("../middlewares/auth");
+const ErrorHandler = require("../utils/ErrorHandler");
+const { isShopAuthenticated, isAdmin } = require("../middlewares/auth");
 const Event = require("../modal/event");
-const fs= require("fs")
+const fs = require("fs");
 
 // create event
 
@@ -42,7 +42,7 @@ router.post(
 // delete event
 router.delete(
   "/delete-event/:id",
-  isShopAuthenticated,
+  isShopAuthenticated, 
   catchAsyncErrors(async (req, res, next) => {
     // get the event id from  params
     const { id } = req.params;
@@ -54,7 +54,7 @@ router.delete(
       }
 
       deletedEvent.images.forEach((image) => {
-        const filePath = `uploads/${image}`; 
+        const filePath = `uploads/${image}`;
         fs.unlink(filePath, (err) => {
           if (err) {
             console.log(err.message);
@@ -94,17 +94,20 @@ router.get(
 
 // all the events  of all shop
 
-router.get("/get-all-shops-events", catchAsyncErrors(async(req, res, next)=>{
-  try{
-    const totalEvents= await Event.find().sort({ createdAt: -1 });
+router.get(
+  "/get-all-shops-events",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const totalEvents = await Event.find().sort({ createdAt: -1 });
 
-    res.status(201).json({
-      success:true,
-      totalEvents
-    })
-  }catch(error){
-    return next(new ErrorHandler(error.message, 500))
-  }
-}))
+      res.status(201).json({
+        success: true,
+        totalEvents,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
 module.exports = router;

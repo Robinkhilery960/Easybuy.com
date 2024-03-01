@@ -32,7 +32,7 @@ export const deleteEvent = createAsyncThunk("deleteEvent", async (id) => {
     return response.data;
   } catch (error) {
     console.log(error);
-    return error;
+    return error.response.data.message;
   }
 });
 
@@ -53,10 +53,10 @@ export const loadAllEvents = createAsyncThunk(
   }
 );
 
-// get all shop's products
+// get all shop's event
 export const loadAllShopsEvents = createAsyncThunk(
   "loadAllShopsEvents",
-  async (shopId) => {
+  async () => {
     try {
       const response = await axios.get(
         `${server}/event/get-all-shops-events`
