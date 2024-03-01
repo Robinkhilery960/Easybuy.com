@@ -16,8 +16,8 @@ import {
   ShopSettingPages,
 } from "./routes/ShopRoutes.js";
 import { AdminDashboardPage, AdminAllOrdersPage,AdminAllProductsPage, AdminAllShopsPage,AdminAllEventsPage, AdminAllUsersPage, AdminWidthdrawMoneyPage } from "./routes/AdminRoutes.js";
-import {
-  LoginPage,
+import { 
+  UserLoginPage,
   SignupPage,
   ActivationPage,
   HomePage,
@@ -84,9 +84,8 @@ const App = () => {
           </Elements>
         )}
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<LoginPage />} />
-           
+          <Route path="/" element={<HomePage />} />  
+          <Route path="/login" element={<UserLoginPage />} />  
           <Route path="/sign-up" element={<SignupPage />} />
           <Route path="/products" element={<ProductPage />} />
           <Route
