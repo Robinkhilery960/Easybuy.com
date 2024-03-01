@@ -8,8 +8,14 @@ const sendMail = require("../utils/sendMail");
 const ErrorHandler = require("../utils/ErrorHandler");
 const sendToken = require("../utils/jwtToken.js");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
-const { isAuthenticated, isShopAuthenticated } = require("../middlewares/auth.js");
+const {
+  isAuthenticated,
+  isShopAuthenticated,
+  isAdmin,
+} = require("../middlewares/auth.js");
 const Shop = require("../modal/shop.js");
+const Product = require("../modal/product.js");
+const Event = require("../modal/event.js");
 const sendShopToken = require("../utils/shopToken.js");
 
 // create shop
@@ -85,7 +91,6 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
   }
 });
 
-
 // activate shop
 router.post(
   "/activation",
@@ -94,7 +99,7 @@ router.post(
       const { activationToken } = req.body;
 
       const newSeller = jwt.verify(
-        activationToken, 
+        activationToken,
         process.env.ACTIVATION_SECRET_KEY
       );
 
@@ -119,16 +124,16 @@ router.post(
         address,
         phoneNumber,
       });
- 
-    const loginUrl = `http://localhost:3000/shop/shop-login`; 
-      
+
+      const loginUrl = `http://localhost:3000/shop/shop-login`;
+
       try {
         await sendMail({
-          email ,
+          email,
           subject: "Thanks for activating shop",
           message: `Hello ${name}, Your shop is activated you can login  to yout shop by clicking here  ${loginUrl}`,
         });
-  
+
         res.status(201).json({
           message: `You shop is activated`,
         });
@@ -160,7 +165,7 @@ router.post(
           new ErrorHandler("Shop not found, Please register your  shop ", 400)
         );
       }
-        
+
       // comapre password
       const isPasswordValid = await shop.comparePassword(password);
       console.log(isPasswordValid);
@@ -180,56 +185,58 @@ router.get(
   "/getshop",
   isShopAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
-     try {
-      console.log("i am called from getshop ", req.shop)
-        if(!req.shop){
-          return next(new ErrorHandler("Shop does not exist please signup", 400))
-        }
-        res.status(201).json({
-          success:true,
-          shop:req.shop
-        })
-      } catch (error) {
-        return next(new ErrorHandler(error.message, 500))
-     }
+    try {
+      console.log("i am called from getshop ", req.shop);
+      if (!req.shop) {
+        return next(new ErrorHandler("Shop does not exist please signup", 400));
+      }
+      res.status(201).json({
+        success: true,
+        shop: req.shop,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   })
 );
 
-// logout shop 
-router.get("/logout", isShopAuthenticated, catchAsyncErrors(async(req, res)=>{
-  try {
-    res.cookie("sellerToken", null, {
-      expires:new Date(Date.now()),
-      httpOnly: true
-    })
+// logout shop
+router.get(
+  "/logout",
+  isShopAuthenticated,
+  catchAsyncErrors(async (req, res) => {
+    try {
+      res.cookie("sellerToken", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+      });
 
-    res.status(201).json({
-      success:true,
-      message:"Log out successful!"
-    })
-  } catch (error) {
-    return next(new ErrorHandler(error.message, 500))
-  }
-}))
+      res.status(201).json({
+        success: true,
+        message: "Log out successful!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
 // get shop info  for preview
 router.get(
-  "/get-shop-info/:shopId", 
+  "/get-shop-info/:shopId",
   catchAsyncErrors(async (req, res, next) => {
-     try { 
-       const {shopId}= req.params
-      const shop=await Shop.findById(shopId)
-        res.status(201).json({
-          success:true,
-          shop
-        })
-      } catch (error) {
-        return next(new ErrorHandler(error.message, 500))
-     }
+    try {
+      const { shopId } = req.params;
+      const shop = await Shop.findById(shopId);
+      res.status(201).json({
+        success: true,
+        shop,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
   })
 );
-
-
 
 // creatng activation tokens
 function createActivationToken(shop) {
@@ -238,7 +245,7 @@ function createActivationToken(shop) {
   });
 }
 
-// update shop avatar 
+// update shop avatar
 
 router.put(
   "/updateshop",
@@ -252,7 +259,7 @@ router.put(
       if (!shop) {
         return next(new ErrorHandler("Shop not found", 400));
       }
- 
+
       shop.name = name;
       shop.description = description;
       shop.address = address;
@@ -289,9 +296,50 @@ router.put(
   })
 );
 
+// get all shops
+router.get(
+  "/getAllShops",
+  isAuthenticated,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const allShops = await Shop.find().sort({ createdAt: -1 });
+      res.status(200).json({
+        success: true,
+        allShops,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
 
+// delete a shop
+router.delete(
+  "/delete-shop/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    // get the user id from  params
+    const { id } = req.params;
+    console.log(id);
+    // find  and delete this user
+    try {
+      const deletedShop = await Shop.findByIdAndDelete(id, { new: true });
+      console.log("deletedShop", deletedShop);
+      if (!deletedShop) {
+        return next(new ErrorHandler("Shop not found to delete", 500));
+      }
 
+      await Product.deleteMany({ shopId: id });
+      await Event.deleteMany({ shopId: id });
 
-
+      res.status(200).json({
+        message: "Shop deleted successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 500));
+    }
+  })
+);
 
 module.exports = router;
