@@ -12,7 +12,7 @@ const path = require("path");
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://easybuy-com-xc8k.vercel.app/",
     credentials: true,
   })
 );
