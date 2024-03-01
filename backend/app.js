@@ -4,12 +4,10 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const path=require("path")
+const path = require("path");
 // const fileUpload= require("express-fileupload")
 
-app.use("/", (req, res) => {
-  res.send("Hello world!");
-});
+
 
 app.use(express.json());
 app.use(
@@ -19,10 +17,12 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use("/", express.static(path.join(__dirname,"./uploads")));
+app.use("/", express.static(path.join(__dirname, "./uploads")));
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(fileUpload({useTempFiles:true}))
-
+app.use("/test", (req, res) => {
+  res.send("Hello world!");
+});
 const user = require("./controllers/user");
 const shop = require("./controllers/shop");
 const product = require("./controllers/product");
