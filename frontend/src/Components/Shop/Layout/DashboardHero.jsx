@@ -17,7 +17,7 @@ const DashboardHero = () => {
 
     const deliveredOrders = shopOrders && shopOrders.filter((order) => (order.status === "Delivered"))
     const collectedMoney = deliveredOrders && deliveredOrders.length > 0 && deliveredOrders.reduce((acc, order) => (acc + order.totalPrice), 0)
-    const moneyAfterServiceCharge = collectedMoney * .1
+    const moneyAfterServiceCharge = collectedMoney * .9
     const columns = [
         {
             field: "id",

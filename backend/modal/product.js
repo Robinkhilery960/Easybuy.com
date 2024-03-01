@@ -55,6 +55,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
+  
   shop: {
     type: Object,
     require: true,

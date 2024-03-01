@@ -20,7 +20,7 @@ const ShopProfileData = ({ isOwner }) => {
 
     const { shopId } = useParams()
 
-    const shopEvents = allEvents && allEvents.filter((event) => event.shopId === shop._id)
+    const shopEvents = allEvents && allEvents.filter((event) => event.shopId ===shopId)
     let allReviewsOfShop = []
     shopProducts && shopProducts.forEach(product => {
         if (product.reviews.length > 0) {

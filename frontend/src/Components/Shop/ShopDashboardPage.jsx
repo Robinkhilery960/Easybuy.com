@@ -17,7 +17,7 @@ const ShopDashboardPage = () => {
                 </div>
             </>
         </div>
-    )
+    )   
 }
 
 export default ShopDashboardPage

@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "name":"multi-vendor-ecommerce-fullstack",
+    "builds":[
+        {"src":"server.js","use":"@vercel/node"}
+    ],
+    "routes":[
+        {"src":"/(.*)","dest":"/server.js"}
+    ]
+}

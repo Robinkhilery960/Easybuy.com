@@ -13,8 +13,9 @@ import {
   AllOrdersPage,
   OrderDetailPage,
   AllOrderRefundPage,
-  ShopSettingPages
+  ShopSettingPages,
 } from "./routes/ShopRoutes.js";
+import { AdminDashboardPage, AdminAllOrdersPage,AdminAllProductsPage, AdminAllShopsPage,AdminAllEventsPage, AdminAllUsersPage, AdminWidthdrawMoneyPage } from "./routes/AdminRoutes.js";
 import {
   LoginPage,
   SignupPage,
@@ -33,7 +34,7 @@ import {
   PaymentPage,
   OrderSuccessPage,
   UserOrderDetailPage,
-  UserOrderTrackPage
+  UserOrderTrackPage,
 } from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -44,6 +45,7 @@ import { loadUser } from "./redux/slice/user.js";
 import ProtectedRoute from "./routes/ProtectedRoute.js";
 import { loadShop } from "./redux/slice/shop.js";
 import ProtectedShopRoute from "./routes/ProtectedShopRoutes.js";
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute.js";
 import { loadAllProducts } from "./redux/slice/product.js";
 import { loadAllEvents, loadAllShopsEvents } from "./redux/slice/event.js";
 
@@ -132,6 +134,66 @@ const App = () => {
           />
 
           <Route path="/order/success" element={<OrderSuccessPage />} />
+
+          {/* Admin Routes */}
+          <Route
+            path="/admin-dashboard"
+            element={
+              <ProtectedAdminRoute>
+                <AdminDashboardPage />
+              </ProtectedAdminRoute>
+            }
+          />
+           <Route
+            path="/admin-orders"
+            element={
+              <ProtectedAdminRoute>
+                <AdminAllOrdersPage />
+              </ProtectedAdminRoute>
+            }
+          />
+           <Route
+            path="/admin-products"
+            element={
+              <ProtectedAdminRoute>
+                <AdminAllProductsPage />
+              </ProtectedAdminRoute>
+            }
+          />
+           <Route
+            path="/admin-shops"
+            element={
+              <ProtectedAdminRoute>
+                <AdminAllShopsPage />
+              </ProtectedAdminRoute>
+            }
+          />
+           <Route
+            path="/admin-events"
+            element={
+              <ProtectedAdminRoute>
+                <AdminAllEventsPage />
+              </ProtectedAdminRoute>
+            }
+          />
+           <Route
+            path="/admin-users"
+            element={
+              <ProtectedAdminRoute>
+                <AdminAllUsersPage />
+              </ProtectedAdminRoute>
+            }
+          />
+           <Route
+            path="/admin-withdraw-money"
+            element={
+              <ProtectedAdminRoute>
+                <AdminWidthdrawMoneyPage />
+              </ProtectedAdminRoute>
+            }
+          />
+           
+
           {/* Shop Routes */}
 
           <Route path="/create-shop" element={<CreateShopPage />} />

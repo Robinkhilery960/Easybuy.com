@@ -6,6 +6,10 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 // const fileUpload= require("express-fileupload")
 
+app.use("/", (req, res) => {
+  res.send("Hello world!");
+});
+
 app.use(express.json());
 app.use(
   cors({
@@ -14,7 +18,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use("/", express.static("uploads"));
+app.use("/", express.static("../uploads"));
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(fileUpload({useTempFiles:true}))
 
