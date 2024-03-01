@@ -4,6 +4,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const path=require("path")
 // const fileUpload= require("express-fileupload")
 
 app.use("/", (req, res) => {
@@ -18,7 +19,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use("/", express.static("../uploads"));
+app.use("/", express.static(path.join(__dirname,"./uploads")));
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(fileUpload({useTempFiles:true}))
 
