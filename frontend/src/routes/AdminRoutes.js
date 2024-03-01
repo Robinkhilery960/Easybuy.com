@@ -1,10 +1,10 @@
-import AdminDashboardPage from "../Components/Admin/AdminDashboardPage.jsx";
-import AdminAllOrdersPage from "../Components/Admin/AdminAllOrdersPage.jsx";
-import AdminAllProductsPage from "../Components/Admin/AdminAllProductsPage.jsx";
-import AdminAllShopsPage from "../Components/Admin/AdminAllShopsPage.jsx";
-import AdminAllEventsPage from "../Components/Admin/AdminAllEventsPage.jsx";
-import AdminAllUsersPage from "../Components/Admin/AdminAllUsersPage.jsx";
-import AdminWidthdrawMoneyPage from "../Components/Admin/AdminWidthdrawMoneyPage.jsx";
+import AdminDashboardPage from "../Components/Admin/AdminDashboardPage";
+import AdminAllOrdersPage from "../Components/Admin/AdminAllOrdersPage";
+import AdminAllProductsPage from "../Components/Admin/AdminAllProductsPage";
+import AdminAllShopsPage from "../Components/Admin/AdminAllShopsPage";
+import AdminAllEventsPage from "../Components/Admin/AdminAllEventsPage";
+import AdminAllUsersPage from "../Components/Admin/AdminAllUsersPage";
+import AdminWidthdrawMoneyPage from "../Components/Admin/AdminWidthdrawMoneyPage";
 
 export {
   AdminDashboardPage,
