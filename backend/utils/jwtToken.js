@@ -1,18 +1,18 @@
-const sendToken=async(user, statusCode, res)=>{
+const sendToken = async (user, statusCode, res) => {
     //creat a jwt token 
-    const token= await user.getJwtToken(); 
+    const token = await user.getJwtToken();
     // option for cookies
-    const options={
-        expires:new Date(Date.now()+90*24*60*60*1000),
+    const options = {
+        expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000),
+        SameSite="None",
         httpOnly:true,
-        sameSite:"none",
-        secure:true
+        Secure: true
     }
-    res.status(statusCode).cookie("token", token , options).json({
-        sucess:true,
+    res.status(statusCode).cookie("token", token, options).json({
+        sucess: true,
         user,
         token
     })
 }
 
-module.exports=sendToken 
+module.exports = sendToken 
