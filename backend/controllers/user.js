@@ -56,7 +56,7 @@ router.post("/create-user", async (req, res, next) => {
 
     //create an activation token using jwt
     const actvationToken = createActivationToken(user);
-    const activationUrl = `http://localhost:3000/activation/${actvationToken}`;
+    const activationUrl = `https://easybuy-com-frontend-two.vercel.app/activation/${actvationToken}`;
 
     try {
       await sendMail({

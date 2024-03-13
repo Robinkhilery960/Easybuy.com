@@ -10,7 +10,7 @@ const path = require("path");
 app.use(express.json({ limit: '10mb' }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://easybuy-com-frontend-two.vercel.app",
     credentials: true,
   })
 );
