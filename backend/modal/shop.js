@@ -21,14 +21,23 @@ const shopSchema = new mongoose.Schema({
   },
   address: {
     type: String,
-    required:[true, "Plesase enter your shop address"]
+    required: [true, "Plesase enter your shop address"],
   },
   description: {
     type: String,
   },
   role: { type: String, default: "Seller" },
   zipCode: { type: Number, required: [true, "Please enter your zip code"] },
-  avatar: String,
+  avatar: {
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
+  },
   createdAt: { type: Date, default: Date.now() },
   resetPasswordToken: String,
   resetPasswordTime: Date,

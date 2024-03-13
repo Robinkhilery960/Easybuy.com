@@ -222,4 +222,4 @@ const CardData = ({ cart, subTotalPrice, totalPrice, shippingCost, couponCode, s
     )
 }
 
-export default Checkout
+export default Checkout         

@@ -20,23 +20,22 @@ const ShopSetting = () => {
 
 
     const handleFileInutChange = (e) => {
-        const file = e.target.files[0];
-        setAvatar(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                setAvatar(reader.result);
+            }
+        };
+
+        reader.readAsDataURL(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const config = { headers: { "Content-Type": "multipart/form-data" } };
-
-        const newForm = new FormData();
-        newForm.append("name", name);
-        newForm.append("address", address);
-        newForm.append("description", description);
-        newForm.append("phoneNumber", phoneNumber);
-        newForm.append("zipCode", zipCode);
-        newForm.append("image", avatar);
-
-        await axios.put(`${server}/shop/updateshop`, newForm, {
+         
+        await axios.put(`${server}/shop/updateshop`, {
+            name, address, description, phoneNumber, zipCode,avatar
+        }, {
             withCredentials: true,
         }).then(res => {
             toast.success("Shop updated successfully")
@@ -55,8 +54,8 @@ const ShopSetting = () => {
                     <img
                         src={
                             avatar
-                                ? URL.createObjectURL(avatar)
-                                : `${backend_url}` + shop?.avatar
+                                ? avatar
+                                : shop?.avatar?.url
                         }
                         className="w-[150px] h-[150px] rounded-full object-cover border-[3px] border-[#3ad132]"
                         alt=""

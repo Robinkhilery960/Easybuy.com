@@ -1,6 +1,7 @@
-const app = require("./app");
 const  {config}  = require("./config/index.js"); 
+const app = require("./app");
 const connectDatabase = require("./db/Database");
+const cloudinary = require('cloudinary').v2;
   
 // Handling uncaught Exception
 
@@ -11,6 +12,12 @@ process.on("uncaughtException", (err) => {
 
 // connecting to databse
 connectDatabase();
+
+cloudinary.config({
+  cloud_name:config.CLOUINARY_CLOUD_NAME,
+  api_key:config.CLOUINARY_API_KEY,
+  api_secret:config.CLOUINARY_API_SECRET
+})
 
 // create server
 const server = app.listen(config.PORT || 8000, () => {

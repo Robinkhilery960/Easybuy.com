@@ -11,13 +11,12 @@ const initialState = {
 
 export const createProduct = createAsyncThunk(
   "createProduct",
-  async (newForm) => {
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
+  async ({ name, description, category, tags, originalPrice, discountPrice, stock, shopId, images }) => {
+    
     try {
       const response = await axios.post(
         `${server}/product/create-product`,
-        newForm,
-        config
+        { name, description, category, tags, originalPrice, discountPrice, stock, shopId, images } 
       );
       return response.data;
     } catch (error) {

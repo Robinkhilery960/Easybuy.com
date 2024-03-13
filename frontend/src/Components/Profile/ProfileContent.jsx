@@ -30,21 +30,18 @@ const ProfileContent = ({ active }) => {
 
     const dispatch = useDispatch();
     const handleSubmit = (e) => {
-        e.preventDefault();
-        const config = { headers: { "Content-Type": "multipart/form-data" } };
-
-        const newForm = new FormData();
-        newForm.append("name", name);
-        newForm.append("email", email);
-        newForm.append("password", password);
-        newForm.append("phoneNumber", phoneNumber);
-        newForm.append("image", avatar);
-        dispatch(updateUser(newForm));
+        e.preventDefault(); 
+        dispatch(updateUser({name, email,password, phoneNumber, avatar}));
     };
 
     const handleFileInutChange = (e) => {
-        const file = e.target.files[0];
-        setAvatar(file);
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                setAvatar(reader.result);
+            }
+        }; 
+        reader.readAsDataURL(e.target.files[0]);
     };
 
     useEffect(() => {
@@ -64,8 +61,8 @@ const ProfileContent = ({ active }) => {
                             <img
                                 src={
                                     avatar
-                                        ? URL.createObjectURL(avatar)
-                                        : `${backend_url}` + user?.avatar
+                                        ? avatar
+                                        : user?.avatar?.url
                                 }
                                 className="w-[150px] h-[150px] rounded-full object-cover border-[3px] border-[#3ad132]"
                                 alt=""

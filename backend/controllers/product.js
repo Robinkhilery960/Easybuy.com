@@ -6,33 +6,46 @@ const Shop = require("../modal/shop");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Product = require("../modal/product");
 const Order = require("../modal/order");
-const { isShopAuthenticated, isAuthenticated, isAdmin } = require("../middlewares/auth");
+const cloudinary = require("cloudinary").v2;
+const {
+  isShopAuthenticated,
+  isAuthenticated,
+  isAdmin,
+} = require("../middlewares/auth");
 const fs = require("fs");
 
 // create product
 
 router.post(
   "/create-product",
-  upload.array("images"),
   catchAsyncErrors(async (req, res, next) => {
     // getting data from frontend
     try {
-      const { shopId } = req.body;
+      const { shopId, images } = req.body; 
       const shop = await Shop.findById(shopId);
       if (!shop) {
         return next(new ErrorHandler("shopId is invalid", 404));
-      } else {
-        // now we wil create a product for this shop
-        const productData = req.body;
-        productData.shop = shop;
-        const imageUrls = req.files.map((file) => `${file.filename}`);
-        productData.images = imageUrls;
-        const product = await Product.create(productData);
-        res.status(200).json({
-          message: "Product created successfully",
-          product,
+      }
+      // now we will create a product for this shop
+      const productData = req.body;
+      productData.shop = shop;
+      const imgArr = [];
+      for (let i = 0; i < images.length; i++) {
+        const mycloud = await cloudinary.uploader.upload(images[i], {
+          folder: "productImages",
+        });
+        imgArr.push({
+          public_id: mycloud.public_id,
+          url: mycloud.secure_url,
         });
       }
+      console.log("imgArr", imgArr);
+      productData.images = imgArr;
+      const product = await Product.create(productData);
+      res.status(200).json({
+        message: "Product created successfully",
+        product,
+      });
     } catch (error) {
       return next(new ErrorHandler(error, 500));
     }
@@ -214,5 +227,5 @@ router.delete(
     }
   })
 );
- 
+
 module.exports = router;

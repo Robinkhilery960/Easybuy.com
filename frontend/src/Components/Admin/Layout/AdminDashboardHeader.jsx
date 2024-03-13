@@ -39,7 +39,7 @@ const AdminDashboardHeader = () => {
                         <BiMessageSquareDetail color='#555' size={30} className='mx-5 cursor-pointer' />
                     </Link>
                     <Link to={`/profile`} >
-                        <img src={`${backend_url}${user?.avatar}`} alt="" className='w-[50px] h-[50px] rounded-full object-cover' />
+                        <img src={user?.avatar?.url} alt="" className='w-[50px] h-[50px] rounded-full object-cover' />
                     </Link>
                 </div>
             </div>

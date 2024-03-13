@@ -10,10 +10,12 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const sendToken = require("../utils/jwtToken.js");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
 const { isAuthenticated, isAdmin } = require("../middlewares/auth.js");
+const cloudinary = require("cloudinary").v2;
 
-router.post("/create-user", upload.single("file"), async (req, res, next) => {
+router.post("/create-user", async (req, res, next) => {
   // data extraction from  request
-  const { name, email, password } = req.body;
+  const { name, email, password, avatar } = req.body;
+  console.log(name, email, password, avatar);
 
   if (!(name && email && password)) {
     return next(new ErrorHandler("A field is left blank plase fill it ", 400));
@@ -33,24 +35,23 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
 
     // if user already exist
     if (userEmail) {
-      // remove the upload image in upload directory
-      const filename = req.file.filename;
-      const filePath = `uploads/${filename}`;
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err.message);
-        } else {
-          console.log("Deletion of file is done");
-        }
-      });
       return next(new ErrorHandler("User already exist", 400));
     }
-    const filename = req.file.filename;
-    const fileUrl = path.join(filename);
-    console.log(fileUrl);
+
+    const mycloud = await cloudinary.uploader.upload(avatar, {
+      folder: "avatars",
+    });
 
     // make a new user
-    const user = { name, email, password, avatar: fileUrl };
+    const user = {
+      name,
+      email,
+      password,
+      avatar: {
+        public_id: mycloud.public_id,
+        url: mycloud.secure_url,
+      },
+    };
     console.log(user);
 
     //create an activation token using jwt
@@ -165,7 +166,7 @@ router.get(
     }
   })
 );
-
+// logout user
 router.get(
   "/logout",
   isAuthenticated,
@@ -174,6 +175,8 @@ router.get(
       res.cookie("token", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
+        sameSite: "none",
+        secure: true,
       });
 
       res.status(201).json({
@@ -190,10 +193,9 @@ router.get(
 router.put(
   "/updateuser",
   isAuthenticated,
-  upload.single("image"),
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const { name, email, password, phoneNumber } = req.body;
+      const { name, email, password, phoneNumber, avatar } = req.body;
       // does user exist already
       let user = req.user;
       if (!user) {
@@ -208,24 +210,14 @@ router.put(
 
       user.name = name;
       user.phoneNumber = phoneNumber;
-      // remove the upload image in upload directory
-      if (user) {
-        const filename = user.avatar;
-        const filePath = `uploads/${filename}`;
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.log(err.message);
-          } else {
-            console.log("Deletion of file is done");
-          }
-        });
-      }
-      const filename = req.file.filename;
-      const fileUrl = path.join(filename);
-      console.log(fileUrl);
+      const mycloud = await cloudinary.uploader.upload(avatar, {
+        folder: "avatars",
+      });
 
-      // make a new user
-      user.avatar = fileUrl;
+      user.avatar = {
+        public_id: mycloud.public_id,
+        url: mycloud.secure_url,
+      };
 
       await user.save();
 
@@ -357,11 +349,11 @@ router.get(
   })
 );
 
-// delete user-- 
+// delete user--
 router.delete(
   "/delete-user/:id",
   isAuthenticated,
-  isAdmin("Admin"), 
+  isAdmin("Admin"),
   catchAsyncErrors(async (req, res, next) => {
     // get the user id from  params
     const { id } = req.params;

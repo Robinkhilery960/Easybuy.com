@@ -65,7 +65,7 @@ const ProductCard = ({ data, isEvent }) => {
 
                     </div>
                     <Link to={isEvent ? `/product/${data._id}?isEvent="true` : `/product/${data._id}`}>
-                        <img src={`${backend_url}${data?.images[0]}`} alt="" className='w-full h-[170px] object-contain' />
+                        <img src={data?.images[0].url} alt="" className='w-full h-[170px] object-contain' />
                     </Link>
                     <Link to={`/shop/preview/${data?.shop._id}`}>
                         <h5 className={`${styles.shop_name}`}>
@@ -83,11 +83,11 @@ const ProductCard = ({ data, isEvent }) => {
                             <div className="flex">
                                 <h5 className={`${styles.productDiscountPrice} `}>
                                     {
-                                        data.price === 0 ? data.originalPrice : data.discountPrice
+                                        data.price === 0 ? data.originalPrice + " $" : data.discountPrice + " $"
                                     }
                                 </h5>
                                 <h4 className={`${styles.price} `}>
-                                    {data.originalPrice ? data.originalPrice + " ₹ " : null}
+                                    {data.originalPrice ? data.originalPrice + " $  " : null}
                                 </h4>
                             </div>
                             <span className='font-[400] text-[17px] text-[#68d284]'>

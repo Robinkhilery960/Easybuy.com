@@ -15,24 +15,22 @@ const Signup = () => {
     const navigate = useNavigate()
 
     const handleFileInutChange = (e) => {
-        const file = e.target.files[0]
-        setAvatar(file)
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                setAvatar(reader.result);
+            }
+        };
+
+        reader.readAsDataURL(e.target.files[0]);
     }
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const config = { headers: { "Content-Type": "multipart/form-data" } }
-
-        const newForm = new FormData()
-
-        newForm.append("name", name)
-        newForm.append("email", email)
-        newForm.append("password", password)
-        newForm.append("file", avatar)
 
 
-        axios.post(`${server}/user/create-user`, newForm, config).then((res) => {
-            toast.success(res.data.message)
+        axios.post(`${server}/user/create-user`, { name, email, password, avatar }).then((res) => {
+            toast.success(res?.data?.message)
             setName("")
             setEmail("")
             setPassword("")
@@ -91,7 +89,7 @@ const Signup = () => {
                             </label>
                             <div className='mt2 flex items-center'>
                                 <span className='inline-block h-8 w-8 rounded-full overflow-hidden '>
-                                    {avatar ? <img src={URL.createObjectURL(avatar)} alt="avatar" className='h-full w-full  rounded-full overflow-hidden' /> : <RxAvatar className="h-8 w-8" />}
+                                    {avatar ? <img src={avatar} alt="avatar" className='h-full w-full  rounded-full overflow-hidden' /> : <RxAvatar className="h-8 w-8" />}
                                 </span>
                                 <label htmlFor="file-input" className='ml-5 flex items-center justify-center px-4  py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-500'>
                                     <span>Upload File</span>

@@ -6,23 +6,46 @@ const initialState = {
   eventLoading: true,
   deleteEventLoading: true,
   allEventsLoading: true,
-  allShopsEventsLoading:true
+  allShopsEventsLoading: true,
 };
 
-export const createEvent = createAsyncThunk("createEvent", async (newForm) => {
-  const config = { headers: { "Content-Type": "multipart/form-data" } };
-  try {
-    const response = await axios.post(
-      `${server}/event/create-event`,
-      newForm,
-      config
-    );
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    return error;
+export const createEvent = createAsyncThunk(
+  "createEvent",
+  async ({
+    name,
+    description,
+    category,
+    tags,
+    originalPrice,
+    discountPrice,
+    stock,
+    shopId,
+    startDate,
+    endDate,
+    images,
+  }) => {
+    try {
+      const response = await axios.post(`${server}/event/create-event`, {
+        name,
+        description,
+        category,
+        tags,
+        originalPrice,
+        discountPrice,
+        stock,
+        shopId,
+        startDate,
+        endDate,
+        images,
+      });
+      
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
-});
+);
 
 export const deleteEvent = createAsyncThunk("deleteEvent", async (id) => {
   try {
@@ -36,7 +59,7 @@ export const deleteEvent = createAsyncThunk("deleteEvent", async (id) => {
   }
 });
 
-// load all events 
+// load all events
 
 export const loadAllEvents = createAsyncThunk(
   "loadAllEvents",
@@ -58,16 +81,14 @@ export const loadAllShopsEvents = createAsyncThunk(
   "loadAllShopsEvents",
   async () => {
     try {
-      const response = await axios.get(
-        `${server}/event/get-all-shops-events`
-      );
+      const response = await axios.get(`${server}/event/get-all-shops-events`);
       return response.data;
     } catch (error) {
       console.log(error);
       return error;
     }
   }
-)
+);
 
 const eventSlice = createSlice({
   name: "event",

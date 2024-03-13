@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from "react-router-dom"
 import { server } from '../server'
 
-const ActivationPage = () => {
-    console.log("activation somponent is renderfd")
+const ActivationPage = () => { 
     const { activationToken } = useParams()
     const [error, setError] = useState(false)
     const navigate = useNavigate()

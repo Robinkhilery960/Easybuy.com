@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 
 const CreateProduct = () => {
     const { shop } = useSelector((state) => state.shop)
-    const {  ProductError , ProductSuccess} = useSelector((state) => state.product)
+    const { ProductError, ProductSuccess } = useSelector((state) => state.product)
     const navigate = useNavigate()
     const dispatch = useDispatch()
 
@@ -23,40 +23,37 @@ const CreateProduct = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const newForm = new FormData()
 
-        newForm.append("name", name)
-        newForm.append("description", description)
-        newForm.append("category", category)
-        newForm.append("tags", tags)
-        newForm.append("originalPrice", originalPrice)
-        newForm.append("discountPrice", discountPrice)
-        newForm.append("stock", stock)
-        newForm.append("shopId", shop._id)
-        images.forEach((image) => {
-            newForm.append("images", image)
-        })
-        dispatch(createProduct(newForm))
+        dispatch(createProduct({ name, description, category, tags, originalPrice, discountPrice, stock, shopId: shop._id, images }))
     }
     const handleImageChange = (e) => {
-        e.preventDefault()
-        const files = Array.from(e.target.files)
-        setImages((prevImages => [...prevImages, ...files]))
+        const files = Array.from(e.target.files);
 
+        setImages([]);
 
+        files.forEach((file) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setImages((old) => [...old, reader.result]);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
     }
 
     useEffect(() => {
-         if(ProductError){
+        if (ProductError) {
             toast.error(ProductError)
-        } 
-        if(ProductSuccess){
-            
+        }
+        if (ProductSuccess) {
+
             toast.success("Product is created successfully")
             navigate("/dashboard-products")
             window.location.reload(true)
-         }
-    }, [ ProductError , ProductSuccess])
+        }
+    }, [ProductError, ProductSuccess])
 
 
     return (
@@ -127,7 +124,7 @@ const CreateProduct = () => {
                         <input type="file" name="upload" id="upload" className='hidden' multiple onChange={handleImageChange} />
                         <label htmlFor="upload"><AiOutlinePlusCircle size={30} className='mt-3' color='#555' /></label>
                         {images && images.map((image, i) => (
-                            <img src={URL.createObjectURL(image)} key={i} className='h-[120px]  w[120px] object-cover m-2' />
+                            <img src={image} key={i} className='h-[120px]  w[120px] object-cover m-2' />
                         ))}
                     </div>
                     <br />

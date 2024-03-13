@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
-const CountDown = () => {
+const CountDown = ({endDate}) => {
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
      function  calculateTimeLeft () {
-        const difference = new Date("2023-12-15") - new Date();// difference in ms
+        const difference = new Date(endDate) - new Date();// difference in ms
         let timeLeft = {}
 
         if (difference > 0) {

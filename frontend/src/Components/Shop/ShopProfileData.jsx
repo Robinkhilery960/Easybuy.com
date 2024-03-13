@@ -84,7 +84,7 @@ const ShopProfileData = ({ isOwner }) => {
                             {
                                 allReviewsOfShop && allReviewsOfShop.map(review => (
                                     <div className="flex" key={review._id}>
-                                        <img src={`${backend_url}${review?.user?.avatar}`} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
+                                        <img src={review?.user?.avatar.url} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
                                         <div className="">
                                             <h4 className="text-[15px] font-semibold ">{review?.user?.name}
                                                 <Ratings rating={review.rating} />

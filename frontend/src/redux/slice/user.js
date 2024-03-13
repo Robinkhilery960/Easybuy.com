@@ -17,9 +17,9 @@ export const loadUser = createAsyncThunk("loadUser", async () => {
   }
 });
 
-export const updateUser = createAsyncThunk("updateUser", async (newForm) => {
+export const updateUser = createAsyncThunk("updateUser", async ({name, email,password, phoneNumber, avatar}) => {
   try {
-    const response = await axios.put(`${server}/user/updateuser`, newForm, {
+    const response = await axios.put(`${server}/user/updateuser`, {name, email,password, phoneNumber, avatar}, {
       withCredentials: true,
     });
 

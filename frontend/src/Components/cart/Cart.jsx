@@ -23,7 +23,7 @@ const Cart = ({ setOpenCart }) => {
                     cart && cart.length === 0 ? (
                         <div className="w-full h-screen flex items-center justify-center">
                             <div className="flex w-full justify-end pt-5 pr-5 fixed top-3 right-3">
-                                <RxCross1 size={25} className='cursor-pointer' onClick={()=>setOpenCart(false)} />
+                                <RxCross1 size={25} className='cursor-pointer' onClick={() => setOpenCart(false)} />
                             </div>
                             <h5>Cart Items are empty</h5>
                         </div>
@@ -55,7 +55,7 @@ const Cart = ({ setOpenCart }) => {
                                 <div className={`h-[45px] flex items-center justify-center w-[100%] bg-[#e44343] rounded-[5px]`}>
                                     <Link to="/checkout">
                                         <h1 className='text-[#fff] text-[18px] font-[600]'>
-                                            Checkout Now (₹ {totalPrice})
+                                            Checkout Now ($ {totalPrice})
                                         </h1>
                                     </Link>
                                 </div>
@@ -113,12 +113,12 @@ const CartSingle = ({ data }) => {
                     </div>
                 </div>
 
-                <img src={`${backend_url}${data?.images[0]}`} alt="" className='w-[60px] h-[60px] mx-2' />
+                <img src={data?.images[0].url} alt="" className='w-[60px] h-[60px] mx-2' />
 
                 <div className='pl-[5px]'>
                     <h1>{data.name.length > 10 ? data.name.slice(0, 40) + "...." : data.name}</h1>
-                    <h4 className='font-[400] text-[15px] text-[#00000082]'>₹ {data.discountPrice} * {value}</h4>
-                    <h4 className='font-[600] text-[17px] pt-[3px] text-[#d02222] font-Roboto'>₹ {totalPrice}</h4>
+                    <h4 className='font-[400] text-[15px] text-[#00000082]'>$ {data.discountPrice} * {value}</h4>
+                    <h4 className='font-[600] text-[17px] pt-[3px] text-[#d02222] font-Roboto'>$ {totalPrice}</h4>
                 </div>
                 <RxCross1 className='cursor-pointer' onClick={handleRemoveFromCart} />
             </div>

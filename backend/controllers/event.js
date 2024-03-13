@@ -7,32 +7,41 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const { isShopAuthenticated, isAdmin } = require("../middlewares/auth");
 const Event = require("../modal/event");
 const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 
 // create event
 
 router.post(
   "/create-event",
-  upload.array("images"),
   catchAsyncErrors(async (req, res, next) => {
     // getting data from frontend
     try {
-      const { shopId } = req.body;
-      console.log(shopId);
+      const { shopId, images } = req.body;
       const shop = await Shop.findById(shopId);
+      console.log(shop);
       if (!shop) {
         return next(new ErrorHandler("shopId is invalid", 404));
-      } else {
-        // now we wil create a event  for this shop
-        const eventData = req.body;
-        eventData.shop = shop;
-        const imageUrls = req.files.map((file) => `${file.filename}`);
-        eventData.images = imageUrls;
-        const event = await Event.create(eventData);
-        res.status(200).json({
-          message: "Event created successfully",
-          event,
+      }
+      // now we wil create a event  for this shop
+      const eventData = req.body;
+      eventData.shop = shop;
+      const imgArr = [];
+      for (let i = 0; i < images.length; i++) {
+        const mycloud = await cloudinary.uploader.upload(images[i], {
+          folder: "eventImages",
+        });
+        imgArr.push({
+          public_id: mycloud.public_id,
+          url: mycloud.secure_url,
         });
       }
+      eventData.images = imgArr;
+      console.log(eventData);
+      const event = await Event.create(eventData);
+      res.status(200).json({
+        message: "Event created successfully",
+        event,
+      });
     } catch (error) {
       return next(new ErrorHandler(error, 500));
     }
@@ -42,7 +51,7 @@ router.post(
 // delete event
 router.delete(
   "/delete-event/:id",
-  isShopAuthenticated, 
+  isShopAuthenticated,
   catchAsyncErrors(async (req, res, next) => {
     // get the event id from  params
     const { id } = req.params;

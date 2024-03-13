@@ -38,7 +38,7 @@ const UserOrderDetail = () => {
     }
     const handleRefund = async () => {
         try {
-            axios.put(`${server}/order/request-refund/${orderId}`, {status:"Processing refund"}, { withCredentials: true }).then((res) => {
+            axios.put(`${server}/order/request-refund/${orderId}`, { status: "Processing refund" }, { withCredentials: true }).then((res) => {
                 toast.success("Refund  requested successfully")
                 dispatch(loadUserOrders(user._id))
                 setOpen(false)
@@ -79,7 +79,7 @@ const UserOrderDetail = () => {
             {
                 data && data?.cart?.map((item, index) => (
                     <div className="w-full flex items-start mb-5">
-                        <img src={`${backend_url}${item?.images[0]}`} alt="" className='h-[80px] w-[80px]' />
+                        <img src={item?.images[0].url} alt="" className='h-[80px] w-[80px]' />
                         <div className="w-full">
                             <h5 className="pl-3 text-[20px]">{item.name}</h5>
                             <h5 className="pl-3 text-[20px] text-[#2d262691]">US${item.discountPrice} x {item.qty}</h5>
@@ -108,7 +108,7 @@ const UserOrderDetail = () => {
                             </h2>
                             <br />
                             <div className="w-full flex">
-                                <img src={`${backend_url}${selectedItem?.images[0]}`} alt="" className='h-[80px] w-[80px]' />
+                                <img src={selectedItem?.images[0].url} alt="" className='h-[80px] w-[80px]' />
                                 <div>
                                     <div className="pl-3 text-[20px]">{selectedItem?.name}</div>
                                     <h4 className="pl-3 text-[20px]">

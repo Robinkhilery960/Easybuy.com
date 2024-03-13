@@ -26,45 +26,42 @@ const CreateEvent = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const newForm = new FormData()
 
-        newForm.append("name", name)
-        newForm.append("description", description)
-        newForm.append("category", category)
-        newForm.append("tags", tags)
-        newForm.append("originalPrice", originalPrice)
-        newForm.append("discountPrice", discountPrice)
-        newForm.append("stock", stock)
-        newForm.append("shopId", shop._id)
-        newForm.append("startDate", startDate)
-        newForm.append("endDate", endDate)
-        images.forEach((image) => {
-            newForm.append("images", image)
-        })
-        dispatch(createEvent(newForm))
+        dispatch(createEvent({
+            name, description, category, tags, originalPrice, discountPrice, stock, shopId: shop._id, startDate, endDate, images
+        }))
     }
     const handleImageChange = (e) => {
-        e.preventDefault()
-        const files = Array.from(e.target.files)
-        setImages((prevImages => [...prevImages, ...files]))
+        const files = Array.from(e.target.files);
 
+        setImages([]);
 
+        files.forEach((file) => {
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                if (reader.readyState === 2) {
+                    setImages((old) => [...old, reader.result]);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
     }
-    const handleStartDateChange = (e) => { 
-        const startDate= new Date(e.target.value)
-        const minEndDate= new Date(startDate.getTime() + 3*24 * 60 * 60 *1000 )
+    const handleStartDateChange = (e) => {
+        const startDate = new Date(e.target.value)
+        const minEndDate = new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000)
         setStartDate(startDate)
         setEndDate(null)
-        document.getElementById("end-date").min=minEndDate.toISOString().slice(0, 10)
+        document.getElementById("end-date").min = minEndDate.toISOString().slice(0, 10)
     }
-    const handleEndDateChange = (e) => { 
-        const endDate= new Date(e.target.value)
+    const handleEndDateChange = (e) => {
+        const endDate = new Date(e.target.value)
         setEndDate(endDate)
-        
+
     }
-     
-    const today= new Date().toISOString().slice(0, 10)
-    const minEndDate= startDate ?new Date(startDate.getTime() + 3*24 * 60 * 60 *1000 ).toISOString().slice(0, 10): today
+
+    const today = new Date().toISOString().slice(0, 10)
+    const minEndDate = startDate ? new Date(startDate.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10) : today
     useEffect(() => {
         if (eventError) {
             toast.error(eventError)
@@ -72,11 +69,11 @@ const CreateEvent = () => {
         if (eventSuccess) {
 
             toast.success("Event is created successfully")
-            navigate("/dashboard-events") 
+            navigate("/dashboard-events")
             window.location.reload(true)
 
         }
-    }, [eventSuccess,eventError])
+    }, [eventSuccess, eventError])
 
 
     return (
@@ -161,7 +158,7 @@ const CreateEvent = () => {
                         <input type="file" name="upload" id="upload" className='hidden' multiple onChange={handleImageChange} />
                         <label htmlFor="upload"><AiOutlinePlusCircle size={30} className='mt-3' color='#555' /></label>
                         {images && images.map((image, i) => (
-                            <img src={URL.createObjectURL(image)} key={i} className='h-[120px]  w[120px] object-cover m-2' />
+                            <img src={image} key={i} className='h-[120px]  w[120px] object-cover m-2' />
                         ))}
                     </div>
                     <br />

@@ -7,18 +7,16 @@ const cors = require("cors");
 const path = require("path");
 // const fileUpload= require("express-fileupload")
 
-
-
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(
   cors({
-    origin: "https://easybuy-com-xc8k.vercel.app",
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
 app.use(cookieParser());
 app.use("/", express.static(path.join(__dirname, "./uploads")));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true,  limit: '10mb' }));
 // app.use(fileUpload({useTempFiles:true}))
 app.use("/test", (req, res) => {
   res.send("Hello world!");

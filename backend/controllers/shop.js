@@ -8,6 +8,8 @@ const sendMail = require("../utils/sendMail");
 const ErrorHandler = require("../utils/ErrorHandler");
 const sendToken = require("../utils/jwtToken.js");
 const catchAsyncErrors = require("../middlewares/catchAsyncErrors");
+const cloudinary = require("cloudinary").v2;
+
 const {
   isAuthenticated,
   isShopAuthenticated,
@@ -19,9 +21,10 @@ const Event = require("../modal/event.js");
 const sendShopToken = require("../utils/shopToken.js");
 
 // create shop
-router.post("/create-shop", upload.single("file"), async (req, res, next) => {
+router.post("/create-shop", async (req, res, next) => {
   // data extraction from  request
-  const { name, email, password, phoneNumber, zipCode, address } = req.body;
+  const { name, email, password, phoneNumber, zipCode, address, avatar } =
+    req.body;
 
   if (!(name && email && password && phoneNumber & zipCode && address)) {
     return next(new ErrorHandler("A field is left blank please fill it ", 400));
@@ -41,28 +44,20 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
 
     // if shop already exist
     if (shopEmail) {
-      // remove the upload image in upload directory
-      const filename = req.file.filename;
-      const filePath = `uploads/${filename}`;
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err.message);
-        } else {
-          console.log("Deletion of file is done");
-        }
-      });
       return next(new ErrorHandler("Shop  already exist", 400));
     }
-    const filename = req.file.filename;
-    const fileUrl = path.join(filename);
-    console.log(fileUrl);
-
+    const mycloud = await cloudinary.uploader.upload(avatar, {
+      folder: "shopAvatars",
+    });
     // make a new shop
     const shop = {
       name,
       email,
       password,
-      avatar: fileUrl,
+      avatar: {
+        public_id: mycloud.public_id,
+        url: mycloud.secure_url,
+      },
       phoneNumber,
       zipCode,
       address,
@@ -71,7 +66,7 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
 
     //create an activation token using jwt
     const actvationToken = createActivationToken(shop);
-    const activationUrl = `https://easybuy-com-xc8k.vercel.app/shop/activation/${actvationToken}`;
+    const activationUrl = `http://localhost:3000/shop/activation/${actvationToken}`;
 
     try {
       await sendMail({
@@ -125,17 +120,13 @@ router.post(
         phoneNumber,
       });
 
-      const loginUrl = `https://easybuy-com-xc8k.vercel.app/shop/shop-login`;
+      const loginUrl = `http://localhost:3000/shop/shop-login`;
 
       try {
         await sendMail({
           email,
           subject: "Thanks for activating shop",
           message: `Hello ${name}, Your shop is activated you can login  to yout shop by clicking here  ${loginUrl}`,
-        });
-
-        res.status(201).json({
-          message: `You shop is activated`,
         });
       } catch (error) {
         return next(new ErrorHandler(error.message, 500));
@@ -209,6 +200,8 @@ router.get(
       res.cookie("sellerToken", null, {
         expires: new Date(Date.now()),
         httpOnly: true,
+        sameSite: "none",
+        secure: true,
       });
 
       res.status(201).json({
@@ -250,10 +243,9 @@ function createActivationToken(shop) {
 router.put(
   "/updateshop",
   isShopAuthenticated,
-  upload.single("image"),
   catchAsyncErrors(async (req, res, next) => {
     try {
-      const { name, description, address, phoneNumber } = req.body;
+      const { name, description, address, phoneNumber, avatar } = req.body;
       // does user exist already
       let shop = req.shop;
       if (!shop) {
@@ -264,25 +256,15 @@ router.put(
       shop.description = description;
       shop.address = address;
       shop.phoneNumber = phoneNumber;
-      // remove the upload image in upload directory
-      if (!shop) {
-        const filename = shop.avatar;
-        const filePath = `uploads/${filename}`;
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.log(err.message);
-          } else {
-            console.log("Deletion of file is done");
-          }
-        });
-      }
-      const filename = req.file.filename;
-      const fileUrl = path.join(filename);
-      console.log(fileUrl);
 
-      // make a new user
-      shop.avatar = fileUrl;
+      const mycloud = await cloudinary.uploader.upload(avatar, {
+        folder: "shopAvatars",
+      });
 
+      shop.avatar = {
+        public_id: mycloud.public_id,
+        url: mycloud.secure_url,
+      };
       await shop.save();
 
       res.status(201).json({

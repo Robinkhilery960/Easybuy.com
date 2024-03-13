@@ -8,13 +8,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addTocart } from '../../../redux/slice/cart'
 import { addToWishlist, removeFromWishlist } from '../../../redux/slice/wishlist'
 const ProductDetailCard = ({ setOpen, data }) => {
-    const {cart}= useSelector(state=>state.cart)
+    const { cart } = useSelector(state => state.cart)
     const { wishlist } = useSelector(state => state.wishlist)
 
     const [count, setCount] = useState(1)
     const [click, setClick] = useState(false)
     // const [select, setSelect] = useState(false)
-    const dispatch= useDispatch()
+    const dispatch = useDispatch()
 
 
     const handleMessageSumbit = () => {
@@ -37,7 +37,7 @@ const ProductDetailCard = ({ setOpen, data }) => {
     useEffect(() => {
         if (wishlist && wishlist.find(item => item._id === data._id)) {
             setClick(true)
-        }else{
+        } else {
             setClick(false)
         }
     }, [wishlist])
@@ -56,16 +56,16 @@ const ProductDetailCard = ({ setOpen, data }) => {
                                 onClick={() => setOpen(false)} />
                             <div className="block w-full 800px:flex">
                                 <div className='w-full 800px:[50%]'>
-                                    <img src={`${backend_url}${data?.images[0]}`} alt="" />
+                                    <img src={data?.images[0].url} alt="" />
                                     <div className='flex items-center'>
                                         <Link to={`/shop/preview/${data.shop._id}`}>
-                                            <img src={`${backend_url}${data?.shop?.avatar}`} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
+                                            <img src={data?.shop?.avatar.url} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
                                         </Link>
 
                                         <div>
-                                        <Link to={`/shop/preview/${data.shop._id}`}> 
-                                            <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
-                                        </Link>
+                                            <Link to={`/shop/preview/${data.shop._id}`}>
+                                                <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
+                                            </Link>
 
                                             <h5 className="pb-3 text-[15px]">({data.shop.ratings}) Rating</h5>
                                         </div>

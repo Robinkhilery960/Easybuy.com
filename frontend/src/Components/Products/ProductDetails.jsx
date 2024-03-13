@@ -93,12 +93,12 @@ const ProductDetails = ({ data }) => {
                         <div className="w-full py-5">
                             <div className="block w-full 800px:flex">
                                 <div className="w-full 800px:w-[50%]">
-                                    <img src={`${backend_url}${data?.images[select]}`} alt="" className="w-[80%]" />
+                                    <img src={data?.images[select].url} alt="" className="w-[80%]" />
                                     <div className="w-full flex my-3 gap-2 flex-wrap ">
                                         {
                                             data && data?.images.map((image, i) => (
                                                 <div className={`${select === 0 ? "border" : "null"} cursor-pointer `} key={image}>
-                                                    <img src={`${backend_url}${image}`} alt="" className="h-[200px]" onClick={() => setSelect(i)} />
+                                                    <img src={image.url} alt="" className="h-[200px]" onClick={() => setSelect(i)} />
                                                 </div>
                                             ))
                                         }
@@ -112,11 +112,11 @@ const ProductDetails = ({ data }) => {
                                     <p>{data.description}</p>
                                     <div className="flex pt-3">
                                         <h4 className={`${styles.productDiscountPrice}`}>
-                                            {data.discountPrice}₹
+                                            {data.discountPrice}$
                                         </h4>
                                         <h3 className={`${styles.price}`}>
                                             {
-                                                data.originalPrice ? data.originalPrice + "₹" : null
+                                                data.originalPrice ? data.originalPrice + "$" : null
                                             }
                                         </h3>
                                     </div>
@@ -154,7 +154,7 @@ const ProductDetails = ({ data }) => {
 
                                     <div className='flex items-center pt-8'>
                                         <Link to={`/shop/preview/${data.shop._id}`}>
-                                            <img src={`${backend_url}${data?.shop?.avatar}`} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
+                                            <img src={data?.shop?.avatar.url} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
                                         </Link>
 
                                         <div className="pr-8">
@@ -162,7 +162,7 @@ const ProductDetails = ({ data }) => {
                                                 <h3 className={`${styles.shop_name} pb-1 pt-1`}>{data.shop.name}</h3>
                                             </Link>
 
-                                            <h5 className="pb-3 text-[15px]">({avgRating ? avgRating.toFixed(1):"0"}/5) Rating</h5>
+                                            <h5 className="pb-3 text-[15px]">({avgRating ? avgRating.toFixed(1) : "0"}/5) Rating</h5>
                                         </div>
                                         <div className={`${styles.button} bg-[#6443d1] mt-4 !rounded-[4px] h-11`} onClick={handleMessageSumbit}>
                                             <span className='text-[#fff] flex items-center'>Send Message
@@ -231,9 +231,9 @@ const ProductDetailInfo = ({ data, shopProducts, avgRating, totalReviews }) => {
             {
                 active === 2 ? (
                     <div className="w-full  min-h-[40vh] flex my-4 flex-col overflow-y-scroll" >
-                        {data && data?.reviews.length !== 0 ? (data.reviews.map((review) => (
+                        {data && data?.reviews?.length !== 0 ? (data?.reviews?.map((review) => (
                             <div className="flex" key={review._id}>
-                                <img src={`${backend_url}${review?.user?.avatar}`} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
+                                <img src={review?.user?.avatar.url} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
                                 <div className="">
                                     <h4 className="text-[15px] font-semibold ">{review?.user?.name}
                                         <Ratings rating={review.rating} />
@@ -251,7 +251,7 @@ const ProductDetailInfo = ({ data, shopProducts, avgRating, totalReviews }) => {
                         <div className="w-full 800px:w-[50%] ">
                             <div className='flex items-center'>
                                 <Link to={`/shop/preview/${data.shop._id}`}>
-                                    <img src={`${backend_url}${data?.shop?.avatar}`} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
+                                    <img src={data?.shop?.avatar.url} alt="" className='w-[50px] h-[50px] rounded-full mr-2' />
                                 </Link>
                                 <div className="pl-3">
                                     <Link to={`/shop/preview/${data.shop._id}`}>

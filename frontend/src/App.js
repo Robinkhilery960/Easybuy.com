@@ -15,8 +15,16 @@ import {
   AllOrderRefundPage,
   ShopSettingPages,
 } from "./routes/ShopRoutes.js";
-import { AdminDashboardPage, AdminAllOrdersPage,AdminAllProductsPage, AdminAllShopsPage,AdminAllEventsPage, AdminAllUsersPage, AdminWidthdrawMoneyPage } from "./routes/AdminRoutes.js";
-import { 
+import {
+  AdminDashboardPage,
+  AdminAllOrdersPage,
+  AdminAllProductsPage,
+  AdminAllShopsPage,
+  AdminAllEventsPage,
+  AdminAllUsersPage,
+  AdminWidthdrawMoneyPage,
+} from "./routes/AdminRoutes.js";
+import {
   UserLoginPage,
   SignupPage,
   ActivationPage,
@@ -48,7 +56,6 @@ import ProtectedShopRoute from "./routes/ProtectedShopRoutes.js";
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute.js";
 import { loadAllProducts } from "./redux/slice/product.js";
 import { loadAllEvents, loadAllShopsEvents } from "./redux/slice/event.js";
-
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 const App = () => {
@@ -84,8 +91,8 @@ const App = () => {
           </Elements>
         )}
         <Routes>
-          <Route path="/" element={<HomePage />} />  
-          <Route path="/login" element={<UserLoginPage />} />  
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<UserLoginPage />} />
           <Route path="/sign-up" element={<SignupPage />} />
           <Route path="/products" element={<ProductPage />} />
           <Route
@@ -144,7 +151,7 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
-           <Route
+          <Route
             path="/admin-orders"
             element={
               <ProtectedAdminRoute>
@@ -152,7 +159,7 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
-           <Route
+          <Route
             path="/admin-products"
             element={
               <ProtectedAdminRoute>
@@ -160,7 +167,7 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
-           <Route
+          <Route
             path="/admin-shops"
             element={
               <ProtectedAdminRoute>
@@ -168,7 +175,7 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
-           <Route
+          <Route
             path="/admin-events"
             element={
               <ProtectedAdminRoute>
@@ -176,7 +183,7 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
-           <Route
+          <Route
             path="/admin-users"
             element={
               <ProtectedAdminRoute>
@@ -184,7 +191,7 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
-           <Route
+          <Route
             path="/admin-withdraw-money"
             element={
               <ProtectedAdminRoute>
@@ -192,7 +199,6 @@ const App = () => {
               </ProtectedAdminRoute>
             }
           />
-           
 
           {/* Shop Routes */}
 

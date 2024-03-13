@@ -102,7 +102,7 @@ const Header = ({ activeHeading }) => {
             <Link to="/create-shop">
               <h1 className="text-[#fff] flex items-center ">
                 {isShopAuthenticated ? "Dashboard" : "Become Seller"}
-                <IoIosArrowForward className="ml-1"/>
+                <IoIosArrowForward className="ml-1" />
               </h1>
             </Link>
           </div>
@@ -189,7 +189,7 @@ const Header = ({ activeHeading }) => {
                   {isAuthenticated ? (
                     <Link to="/profile">
                       <img
-                        src={`${backend_url}` + user?.avatar}
+                        src={user?.avatar?.url}
                         className="w-[35px] h-[35px] rounded-full"
                       />
                     </Link>
@@ -319,7 +319,7 @@ const Header = ({ activeHeading }) => {
                   {isAuthenticated ? (
                     <Link to="/profile">
                       <img
-                        src={`${backend_url}` + user.avatar}
+                        src={user?.avatar?.url}
                         className="w-[35px] h-[35px] rounded-full"
                       />
                     </Link>
